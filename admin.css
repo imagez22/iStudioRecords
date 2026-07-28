@@ -1,0 +1,269 @@
+/* --- Admin Dashboard Layout --- */
+body {
+    /* Prevents scrolling on the main body */
+    overflow: hidden;
+}
+
+.dashboard-container {
+    display: flex;
+    height: 100vh;
+    background-color: var(--color-background);
+}
+
+.sidebar {
+    width: 240px;
+    background-color: var(--color-surface);
+    border-right: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-24);
+    flex-shrink: 0;
+}
+
+.sidebar-header {
+    margin-bottom: var(--space-32);
+    font-size: var(--font-size-xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+}
+
+.sidebar-nav {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-8);
+}
+
+.sidebar-nav a {
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    padding: var(--space-12) var(--space-16);
+    border-radius: var(--radius-base);
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+    transition: all 0.2s ease;
+}
+
+.sidebar-nav a:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-text);
+}
+
+.sidebar-nav a.active {
+    background-color: var(--color-primary);
+    color: var(--color-btn-primary-text);
+}
+
+.main-content {
+    flex-grow: 1;
+    overflow-y: auto; /* Allows the main content to scroll */
+    padding: var(--space-32);
+}
+
+/* --- Header inside Main Content --- */
+.main-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-32);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: var(--space-24);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-24);
+}
+
+/* --- Stats Section --- */
+.stats-section {
+    margin-top: var(--space-32);
+}
+
+/* --- Stats Section --- */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--space-24);
+}
+
+.stat-card {
+    background-color: var(--color-surface);
+    border-radius: var(--radius-lg);
+    padding: var(--space-24);
+    display: flex;
+    align-items: center;
+    gap: var(--space-16);
+    border: 1px solid var(--color-border);
+}
+
+.stat-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xl);
+    color: var(--color-white);
+    flex-shrink: 0;
+}
+
+.stat-info p {
+    margin: 0;
+    color: var(--color-text-secondary);
+}
+
+.stat-info span {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-weight-bold);
+    color: var(--color-text);
+}
+
+/* --- Management Table Styles --- */
+.management-table {
+    margin-top: var(--space-32);
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+.management-table table {
+    width: 100%;
+    border-collapse: collapse;
+}
+.management-table th, .management-table td {
+    padding: var(--space-16);
+    text-align: left;
+    border-bottom: 1px solid var(--color-border);
+}
+.management-table th {
+    font-weight: var(--font-weight-semibold);
+    background-color: rgba(0,0,0,0.1);
+}
+.management-table tbody tr:last-child td {
+    border-bottom: none;
+}
+.action-buttons {
+    display: flex;
+    gap: var(--space-8);
+}
+.btn-modify {
+    background-color: #3b82f6; /* Blue */
+    color: white;
+}
+.btn-delete {
+    background-color: #ef4444; /* Red */
+    color: white;
+}
+
+/* --- Add/Modify Modal Form Styles --- */
+#studio-form-modal .modal-content {
+    max-width: 600px;
+}
+
+#studio-form .form-group {
+    margin-bottom: var(--space-16);
+}
+
+#studio-form .form-control {
+    width: 100%;
+    padding: var(--space-8);
+    border-radius: var(--radius-base);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-size: var(--font-size-base);
+}
+
+#studio-form textarea {
+    font-family: inherit;
+    resize: vertical;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--space-16);
+    margin-top: var(--space-24);
+    border-top: 1px solid var(--color-border);
+    padding-top: var(--space-16);
+}
+
+.btn-save {
+    background-color: #22c55e; /* Green */
+    color: white;
+}
+.btn-cancel {
+    background-color: var(--color-secondary);
+}
+
+/* Fix for the Studio Form Modal Layout */
+#studio-form-modal .modal-content,
+#instrument-form-modal .modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* --- Booking Request Action Buttons --- */
+.action-buttons .btn {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    font-size: 14px;
+}
+.btn-approve {
+    background-color: #22c55e; /* Green */
+    color: white;
+}
+.btn-pending {
+    background-color: #f59e0b; /* Amber */
+    color: white;
+}
+.btn-reject {
+    background-color: #ef4444; /* Red */
+    color: white;
+}
+
+/* --- Feedback Management Styles --- */
+.star-rating-display {
+    color: var(--color-warning); /* Use the existing warning color for stars */
+    font-size: 1.2rem;
+}
+
+.feedback-message-preview {
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: var(--space-8);
+}
+
+.filter-controls label {
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-secondary);
+    font-size: var(--font-size-base);
+    margin: 0;
+}
+
+/* Ensure the select box inherits the admin styling */
+#feedback-filter {
+    padding: var(--space-8) var(--space-12);
+    border-radius: var(--radius-base);
+    border: 1px solid var(--color-border);
+    background-color: var(--color-background);
+    color: var(--color-text);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+}
+
+.btn-view-feedback {
+    background-color: #f59e0b; /* Amber/Orange */
+    color: white;
+}

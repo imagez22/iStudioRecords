@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>My Dashboard - I Studio Records</title>
+    <link rel="stylesheet" href="styles.css?v=3">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+</head>
+<body>
+    <div id="toast-container"></div>
+
+    <!-- Header -->
+    <div id="header-placeholder"></div>
+
+    <!-- Dashboard -->
+    <div class="dashboard-page">
+        <div class="dashboard-layout">
+
+            <!-- Sidebar -->
+            <aside class="dashboard-sidebar">
+                <div class="dash-nav-label">Menu</div>
+                <button class="dash-nav-item active" data-tab="overview" onclick="switchTab('overview', this)">
+                    <i class="fas fa-home"></i> Overview
+                </button>
+                <button class="dash-nav-item" data-tab="bookings" onclick="switchTab('bookings', this)">
+                    <i class="fas fa-calendar-check"></i> My Bookings
+                </button>
+                <button class="dash-nav-item" data-tab="reviews" onclick="switchTab('reviews', this)">
+                    <i class="fas fa-star"></i> My Reviews
+                </button>
+                <div class="dash-nav-divider"></div>
+                <div class="dash-nav-label">Actions</div>
+                <a href="index.html#studios" class="dash-nav-item">
+                    <i class="fas fa-plus"></i> Book a Studio
+                </a>
+                <a href="index.html" class="dash-nav-item">
+                    <i class="fas fa-globe"></i> Back to Site
+                </a>
+                <div class="dash-nav-divider"></div>
+                <button class="dash-nav-item" onclick="logoutUser()" style="color:var(--red-accent);">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </aside>
+
+            <!-- Main content -->
+            <main class="dashboard-main">
+                <!-- Top bar -->
+                <div class="dashboard-topbar">
+                    <div class="dashboard-greeting">
+                        <h1>Hello, <span class="name" id="user-name">Artist</span> 👋</h1>
+                        <p id="user-email-display"></p>
+                    </div>
+                    <div style="display:flex;gap:12px;align-items:center;">
+                        <a href="index.html#studios" class="btn btn-primary"><i class="fas fa-microphone"></i> Book Studio</a>
+                    </div>
+                </div>
+
+                <!-- Overview tab -->
+                <div class="dashboard-tab active" id="tab-overview">
+                    <!-- Stats -->
+                    <div class="dash-stats-grid">
+                        <div class="dash-stat-card" style="--stat-color:#e6a817;--stat-bg:rgba(230,168,23,0.12);">
+                            <div class="dash-stat-icon"><i class="fas fa-calendar-check"></i></div>
+                            <div>
+                                <div class="dash-stat-value" id="total-bookings">0</div>
+                                <div class="dash-stat-label">Total Bookings</div>
+                            </div>
+                        </div>
+                        <div class="dash-stat-card" style="--stat-color:#2ecc71;--stat-bg:rgba(46,204,113,0.12);">
+                            <div class="dash-stat-icon"><i class="fas fa-clock"></i></div>
+                            <div>
+                                <div class="dash-stat-value" id="pending-bookings">0</div>
+                                <div class="dash-stat-label">Pending</div>
+                            </div>
+                        </div>
+                        <div class="dash-stat-card" style="--stat-color:#3498db;--stat-bg:rgba(52,152,219,0.12);">
+                            <div class="dash-stat-icon"><i class="fas fa-star"></i></div>
+                            <div>
+                                <div class="dash-stat-value" id="total-reviews">0</div>
+                                <div class="dash-stat-label">Reviews Given</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent bookings preview -->
+                    <div class="dash-section">
+                        <div class="dash-section-title">
+                            <i class="fas fa-calendar-alt"></i> Recent Bookings
+                            <button class="btn btn-ghost" style="margin-left:auto;font-size:0.8rem;padding:6px 12px;" onclick="switchTab('bookings', document.querySelector('[data-tab=bookings]'))">View All</button>
+                        </div>
+                        <div id="recent-bookings-list"></div>
+                    </div>
+
+                    <!-- Quick actions -->
+                    <div class="dash-section">
+                        <div class="dash-section-title"><i class="fas fa-bolt"></i> Quick Actions</div>
+                        <div class="quick-action-grid">
+                            <a href="index.html#studios" class="quick-action-btn">
+                                <i class="fas fa-microphone-alt"></i>
+                                <span>Book a Studio</span>
+                            </a>
+                            <a href="index.html#instruments" class="quick-action-btn">
+                                <i class="fas fa-guitar"></i>
+                                <span>Instruments</span>
+                            </a>
+                            <button class="quick-action-btn" onclick="document.getElementById('feedbackModal').style.display='flex'">
+                                <i class="fas fa-comment-dots"></i>
+                                <span>Leave Review</span>
+                            </button>
+                            <a href="index.html#contact" class="quick-action-btn">
+                                <i class="fas fa-headset"></i>
+                                <span>Support</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bookings tab -->
+                <div class="dashboard-tab" id="tab-bookings">
+                    <div class="dash-section">
+                        <div class="dash-section-title">
+                            <i class="fas fa-calendar-check"></i> All My Bookings
+                        </div>
+                        <div id="bookings-list"></div>
+                    </div>
+                </div>
+
+                <!-- Reviews tab -->
+                <div class="dashboard-tab" id="tab-reviews">
+                    <div class="dash-section">
+                        <div class="dash-section-title">
+                            <i class="fas fa-star"></i> My Reviews
+                            <button class="btn btn-primary" style="margin-left:auto;font-size:0.8rem;padding:8px 16px;" onclick="document.getElementById('feedbackModal').style.display='flex'">
+                                <i class="fas fa-plus"></i> Add Review
+                            </button>
+                        </div>
+                        <div id="reviews-list"></div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="footer-placeholder"></div>
+
+    <!-- Feedback Form Modal (re-used from index) -->
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content modal-grid">
+            <div class="modal-form-section">
+                <button class="modal-close" onclick="document.getElementById('feedbackModal').style.display='none'">&times;</button>
+                <div class="section-label" style="margin-bottom:var(--space-16);">Feedback</div>
+                <h2 style="margin-bottom:6px;">Leave a Review</h2>
+                <p class="form-subtitle">Your feedback helps us grow. Thank you!</p>
+                <div class="form-group">
+                    <label for="feedback-name">Name</label>
+                    <input type="text" id="feedback-name" class="form-control" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="feedback-email">Email</label>
+                    <input type="email" id="feedback-email" class="form-control" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="feedback-studio-select">Studio</label>
+                    <select id="feedback-studio-select" class="form-control"></select>
+                </div>
+                <label style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-text-secondary);display:block;margin-bottom:8px;">Your Rating</label>
+                <div class="star-rating">
+                    <input type="radio" id="star5" name="rating" value="5"><label for="star5">&#9733;</label>
+                    <input type="radio" id="star4" name="rating" value="4"><label for="star4">&#9733;</label>
+                    <input type="radio" id="star3" name="rating" value="3"><label for="star3">&#9733;</label>
+                    <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
+                    <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
+                </div>
+                <div class="form-group">
+                    <label for="feedback-message">Your Review</label>
+                    <textarea id="feedback-message" class="form-control" rows="4" placeholder="Tell us about your experience..."></textarea>
+                </div>
+                <button id="submit-feedback-btn" class="btn btn-primary" style="width:100%;padding:14px;"><i class="fas fa-paper-plane"></i> Submit Review</button>
+            </div>
+            <div class="modal-image-section">
+                <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=800" alt="Studio">
+            </div>
+        </div>
+    </div>
+
+    <script src="components.js?v=3"></script>
+    <script src="modalLogic.js?v=3"></script>
+    <script>
+        let currentUser = null;
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.dashboard-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.dash-nav-item').forEach(b => b.classList.remove('active'));
+            const tab = document.getElementById('tab-' + tabId);
+            if (tab) tab.classList.add('active');
+            if (btn) btn.classList.add('active');
+        }
+
+        function logoutUser() {
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        function showToast(msg, type = 'gold') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const t = document.createElement('div');
+            t.className = `toast toast-${type}`;
+            t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'music'}"></i> ${msg}`;
+            container.appendChild(t);
+            setTimeout(() => { t.classList.add('toast-out'); setTimeout(() => t.remove(), 300); }, 3500);
+        }
+
+        function initDashboard() {
+            const stored = localStorage.getItem('currentUser');
+            if (!stored) { window.location.href = 'index.html'; return; }
+
+            try {
+                currentUser = JSON.parse(stored);
+                window.user = currentUser;
+
+                document.getElementById('user-name').textContent = currentUser.name || 'Artist';
+                document.getElementById('user-email-display').textContent = currentUser.email || '';
+
+                // Update navbar with polling
+                let attempts = 0;
+                const updateNavbar = setInterval(() => {
+                    attempts++;
+                    const guestMenu = document.getElementById('guest-menu');
+                    const userMenu  = document.getElementById('user-menu');
+                    const greeting  = document.getElementById('user-greeting');
+                    if (guestMenu && userMenu && greeting) {
+                        clearInterval(updateNavbar);
+                        guestMenu.style.setProperty('display', 'none', 'important');
+                        userMenu.style.setProperty('display', 'flex', 'important');
+                        greeting.textContent = `Hi, ${currentUser.name}!`;
+                    } else if (attempts >= 30) clearInterval(updateNavbar);
+                }, 100);
+
+                loadDashboardData(currentUser.email);
+
+                // Pre-fill feedback form
+                const fbName  = document.getElementById('feedback-name');
+                const fbEmail = document.getElementById('feedback-email');
+                if (fbName)  fbName.value  = currentUser.name  || '';
+                if (fbEmail) fbEmail.value = currentUser.email || '';
+
+            } catch(e) {
+                console.error(e);
+                window.location.href = 'index.html';
+            }
+        }
+
+        async function loadDashboardData(email) {
+            try {
+                const res  = await fetch('db.json?v=' + Date.now());
+                const data = await res.json();
+
+                const bookings  = data.bookings.filter(b => b.userEmail === email);
+                const reviews   = data.feedbacks.filter(f => f.userEmail === email);
+                const pending   = bookings.filter(b => b.status === 'Pending').length;
+
+                document.getElementById('total-bookings').textContent  = bookings.length;
+                document.getElementById('pending-bookings').textContent = pending;
+                document.getElementById('total-reviews').textContent   = reviews.length;
+
+                renderBookings(bookings, 'bookings-list');
+                renderBookings(bookings.slice(0, 3), 'recent-bookings-list');
+                renderReviews(reviews);
+
+                // Populate studio select in feedback form
+                const sel = document.getElementById('feedback-studio-select');
+                if (sel && data.studios) {
+                    sel.innerHTML = data.studios.map(s =>
+                        `<option value="${s.id}">${s.name}</option>`
+                    ).join('');
+                }
+
+            } catch(err) {
+                console.error('Dashboard data load failed:', err);
+                showToast('Could not load data. Please refresh.', 'error');
+            }
+        }
+
+        function renderBookings(bookings, containerId) {
+            const el = document.getElementById(containerId);
+            if (!el) return;
+            if (!bookings.length) {
+                el.innerHTML = `<div class="empty-state">
+                    <i class="fas fa-calendar-times"></i>
+                    <p>No bookings yet. <a href="index.html#studios">Book a studio</a> to get started!</p>
+                </div>`;
+                return;
+            }
+            el.innerHTML = bookings.map(b => `
+                <div class="booking-card">
+                    <div class="booking-card-info">
+                        <h4>${b.studioName}</h4>
+                        <p><i class="fas fa-calendar" style="color:var(--color-primary);width:14px;"></i> ${b.date || b.bookingDate || '—'} at ${b.time || b.bookingTime || '—'}</p>
+                        <p><i class="fas fa-clock" style="color:var(--color-text-muted);width:14px;"></i> Requested: ${b.requestedDate || b.requestDate || b.date || '—'}</p>
+                    </div>
+                    <span class="status-badge status-${(b.status || 'pending').toLowerCase()}">${b.status || 'Pending'}</span>
+                </div>
+            `).join('');
+        }
+
+        function renderReviews(reviews) {
+            const el = document.getElementById('reviews-list');
+            if (!el) return;
+            if (!reviews.length) {
+                el.innerHTML = `<div class="empty-state">
+                    <i class="fas fa-star"></i>
+                    <p>No reviews yet. <a href="index.html#studios">Book a studio</a> and share your experience!</p>
+                </div>`;
+                return;
+            }
+            el.innerHTML = reviews.map(r => `
+                <div class="feedback-card">
+                    <div class="feedback-card-header">
+                        <h4>${r.studioName || 'Studio'}</h4>
+                        <div class="feedback-stars">${'★'.repeat(r.rating || 5)}${'☆'.repeat(5 - (r.rating || 5))}</div>
+                    </div>
+                    <p style="font-size:var(--font-size-xs);color:var(--color-text-muted);margin-bottom:8px;"><i class="fas fa-calendar"></i> ${r.date || ''}</p>
+                    <p class="feedback-message">"${r.message || r.text || ''}"</p>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', initDashboard);
+
+        // Logout button in header
+        document.addEventListener('click', e => {
+            if (e.target && e.target.id === 'logout-btn-dashboard') logoutUser();
+        });
+    </script>
+</body>
+</html>

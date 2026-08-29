@@ -3,16 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>JSN Music Studios - Your Creative Space</title>
-    <meta name="description" content="JSN Music Studios - Your creative space to learn and grow with music. Professional recording studios, mixing & mastering, and practice rooms.">
-    <meta name="keywords" content="music studio, recording, mixing, mastering, instruments, practice rooms, Chennai">
-    <link rel="stylesheet" href="styles.css">
+    <title>I Studio Records - Your Creative Space</title>
+    <meta name="description" content="I Studio Records - Your creative space to learn and grow with music. Professional recording studios, mixing & mastering, and practice rooms.">
+    <meta name="keywords" content="music studio, recording, mixing, mastering, instruments, practice rooms, Ghana">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link rel="stylesheet" href="styles.css?v=3">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for Icons -->
+    <!-- Google Fonts: Inter + Space Grotesk -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <!-- Paystack -->
+    <script src="https://js.paystack.co/v1/inline.js"></script>
 
 </head>
 <body>
@@ -22,47 +27,92 @@
     </div>
 
     <!-- Hero Section -->
+    <!-- Toast container -->
+    <div id="toast-container"></div>
+
     <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
         <div class="hero-content">
-            <h1>Explore.<br>Record.Create</h1>
-            <p class="hero-subtitle">Your creative space to learn and grow with music</p>
-            <a href="#studios" class="btn hero-btn" id="hero-book-btn">Book a studio</a>
+            <div class="hero-eyebrow">Keta &middot; Volta Region &middot; Ghana</div>
+            <h1>Where <span class="accent">Artists</span><br>Come to Life</h1>
+            <p class="hero-subtitle">Professional recording studios, world-class mixing &amp; mastering, and creative spaces built for serious musicians.</p>
+            <div class="hero-actions">
+                <a href="#studios" class="btn hero-btn" id="hero-book-btn"><i class="fas fa-microphone"></i> Book a Studio</a>
+                <a href="#services" class="hero-btn-secondary"><i class="fas fa-play"></i> Explore Services</a>
+            </div>
+        </div>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-value">500+</div>
+                <div class="hero-stat-label">Artists Served</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">5</div>
+                <div class="hero-stat-label">Studio Rooms</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-value">10+</div>
+                <div class="hero-stat-label">Years Active</div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="scroll-indicator-line"></div>
+            <span>Scroll</span>
         </div>
     </section>
 
     <!-- Services Section -->
-    <section id="services" class="section services">
+    <section id="services" class="section services-section">
         <div class="container">
-            <h2 class="section-title">Our Services</h2>
-            <p class="section-subtitle">A few services which are quintessential for smooth music production provided by JSN music studios!</p>
-            
+            <div class="section-header">
+                <div class="section-label">What We Offer</div>
+                <h2 class="section-title">World-Class Studio Services</h2>
+                <p class="section-subtitle">Everything you need to bring your musical vision to life — under one roof.</p>
+            </div>
             <div class="services-grid">
-                <div class="service-card interactive">
-                    <div class="service-icon">🎙️</div>
+                <div class="service-card reveal">
+                    <div class="service-icon"><i class="fas fa-microphone-alt"></i></div>
                     <h3>Recording Studio</h3>
-                    <p>High-quality acoustics and setup outside for ease of recording</p>
+                    <p>Acoustically treated rooms with top-tier microphones, preamps, and monitoring for pristine recordings.</p>
                 </div>
-                
-                <div class="service-card interactive">
-                    <div class="service-icon">🎛️</div>
-                    <h3>Mixing & Mastering</h3>
-                    <p>Get your tracks polished and ready</p>
+                <div class="service-card reveal reveal-delay-1">
+                    <div class="service-icon"><i class="fas fa-sliders-h"></i></div>
+                    <h3>Mixing &amp; Mastering</h3>
+                    <p>Industry-standard mix engineers who will craft a balanced, broadcast-ready master for any platform.</p>
                 </div>
-                
-                <div class="service-card interactive">
-                    <div class="service-icon">🎵</div>
-                    <h3>Practice & Jamming rooms</h3>
-                    <p>Book daily jam sessions with pros and</p>
+                <div class="service-card reveal reveal-delay-2">
+                    <div class="service-icon"><i class="fas fa-drum"></i></div>
+                    <h3>Live Band Rooms</h3>
+                    <p>Spacious jam rooms wired for multi-channel live recording — perfect for bands and ensembles.</p>
+                </div>
+                <div class="service-card reveal reveal-delay-3">
+                    <div class="service-icon"><i class="fas fa-headphones-alt"></i></div>
+                    <h3>Beat Production</h3>
+                    <p>Work with our in-house producers and access our library of premium samples, loops and plugins.</p>
+                </div>
+                <div class="service-card reveal">
+                    <div class="service-icon"><i class="fas fa-film"></i></div>
+                    <h3>Podcast &amp; Voice-Over</h3>
+                    <p>Broadcast-quality booths for podcasting, audiobooks, radio ads, and voice-over sessions.</p>
+                </div>
+                <div class="service-card reveal reveal-delay-1">
+                    <div class="service-icon"><i class="fas fa-graduation-cap"></i></div>
+                    <h3>Music Lessons</h3>
+                    <p>One-on-one and group lessons with certified instructors across guitar, piano, vocals and more.</p>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Studios Carousel Section -->
-    <section id="studios" class="section carousel-section">
+    <section id="studios" class="section bg-surface">
         <div class="container">
-            <h2 class="section-title">Explore Our Studios</h2>
-            <p class="section-subtitle">Professionally equipped spaces for any project.</p>
+            <div class="section-header">
+                <div class="section-label">Studio Rooms</div>
+                <h2 class="section-title">Explore Our Studios</h2>
+                <p class="section-subtitle">Professionally equipped spaces for any genre, any project, any budget.</p>
+            </div>
             <div class="carousel-container">
                 <button class="carousel-nav prev" onclick="moveCarousel('studios', -1)" aria-label="Previous studios">‹</button>
                 <div class="carousel-wrapper">
@@ -75,9 +125,13 @@
     </section>
 
     <!-- Instruments Carousel Section -->
-    <section id="instruments" class="section carousel-section">
+    <section id="instruments" class="section">
         <div class="container">
-            <h2 class="section-title">The World of Instruments</h2>
+            <div class="section-header">
+                <div class="section-label">Gear &amp; Instruments</div>
+                <h2 class="section-title">World-Class Equipment</h2>
+                <p class="section-subtitle">Explore our extensive collection of instruments and studio gear available to all clients.</p>
+            </div>
             
             <div class="carousel-container">
                 <button class="carousel-nav prev" onclick="moveCarousel('instruments', -1)" aria-label="Previous instruments">‹</button>
@@ -91,9 +145,13 @@
     </section>
 
     <!-- Reviews Section -->
-<section id="reviews" class="section reviews">
+    <section id="reviews" class="section reviews-section">
     <div class="container">
-        <h2 class="section-title">What Our Clients Say</h2>
+        <div class="section-header">
+            <div class="section-label">Testimonials</div>
+            <h2 class="section-title">What Our Clients Say</h2>
+            <p class="section-subtitle">Hear from the artists and producers who've recorded with us.</p>
+        </div>
         
         <div class="carousel-container">
             <button class="carousel-nav prev" onclick="moveCarousel('reviews', -1)" aria-label="Previous review">‹</button>
@@ -107,9 +165,13 @@
 </section>
 
     <!-- FAQ Section -->
-    <section id="faq" class="section faq">
+    <section id="faq" class="section faq-section">
         <div class="container">
-            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="section-header">
+                <div class="section-label">FAQ</div>
+                <h2 class="section-title">Frequently Asked Questions</h2>
+            </div>
+            <div class="faq-list">
             
             <div class="faq-item">
                 <div class="faq-question" onclick="toggleFAQ(this)">
@@ -160,250 +222,349 @@
                     <p>Yes, we offer professional mixing and mastering services with experienced engineers.</p>
                 </div>
             </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>Can I bring my own engineer or producer?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>Absolutely. You're welcome to bring your own engineer or producer. We charge only for the room, not the engineer.</p>
+                </div>
+            </div>
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFAQ(this)">
+                    <span>What payment methods do you accept?</span>
+                    <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                    <p>We accept all major payment methods via Paystack — card, bank transfer, and USSD. Payment is processed securely at booking.</p>
+                </div>
+            </div>
+            </div>
         </div>
     </section>
 
     <!-- Contact Section -->
-   <section id="contact" class="section contact">
-  <div class="container">
-    <h2 class="section-title">Contact us</h2>
-
-    <div class="contact-content">
-      <!-- Visual side -->
-      <div class="contact-visual">
-        <div class="contact__image">
-            <img src="images/contact-icon.svg" alt="Contact Icon">
+    <section id="contact" class="section contact-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Get In Touch</div>
+                <h2 class="section-title">Contact Us</h2>
+                <p class="section-subtitle">Have questions? We'd love to hear from you.</p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-visual">
+                    <img src="images/contact-icon.svg" alt="Contact">
+                </div>
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                        <div class="contact-item-text"><strong>Address</strong><span>Keta, Volta Region, Ghana</span></div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                        <div class="contact-item-text"><strong>Email</strong><span>aklijoshuaericy@gmail.com</span></div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-phone"></i></div>
+                        <div class="contact-item-text"><strong>Phone</strong><span>+233 501 943 457</span></div>
+                    </div>
+                    <div class="contact-item">
+                        <div class="contact-icon"><i class="fas fa-clock"></i></div>
+                        <div class="contact-item-text"><strong>Hours</strong><span>Mon – Sat, 10AM – 9PM</span></div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-
-      <!-- Info side -->
-      <div class="contact-info">
-
-        <div class="contact-item interactive">
-          <i class="fas fa-map-marker-alt contact-icon"></i>
-          <div>Main locality, Hill Street, Chennai - 600001</div>
-        </div>
-
-        <div class="contact-item interactive">
-          <i class="fas fa-envelope contact-icon"></i>
-          <div>connect@jsnstudios.com</div>
-        </div>
-
-        <div class="contact-item interactive">
-          <i class="fas fa-phone contact-icon"></i>
-          <div>+91 98765 43210</div>
-        </div>
-
-        <div class="contact-item interactive">
-          <i class="fas fa-clock contact-icon"></i>
-          <div>10 AM to 9 PM Mon to Saturday</div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-</section>
+    </section>
 
 
     <!-- Footer Placeholder -->
-    <div id="footer-placeholder">
-        <!-- Fallback footer content -->
-        <footer class="footer">
-            <div class="container">
-                <div class="footer-content">
-                    <div class="footer-section">
-                        <h3>JSN MUSIC STUDIOS</h3>
-                        <p>Your creative space to learn and grow with music</p>
-                    </div>
-                    
-                    <div class="footer-section">
-                        <h3>Home</h3>
-                        <a href="#services">Services</a>
-                        <a href="#reviews">Testimonials</a>
-                        <a href="#faq">FAQs</a>
-                        <a href="#contact">Contact</a>
-                    </div>
-                    
-                    <div class="footer-section">
-                        <h3>Follow us on</h3>
-                        <a href="#" target="_blank" rel="noopener noreferrer">📘 jSN-Music-Studios</a>
-                        <a href="#" target="_blank" rel="noopener noreferrer">📷 jsN_music_studios</a>
-                        <a href="#" target="_blank" rel="noopener noreferrer">🐦 jsN_music_studios</a>
-                    </div>
-                </div>
-                
-                <div class="footer-bottom">
-                    <p>&copy; 2025 JSN Music Studios. All rights reserved.</p>
+    <div id="footer-placeholder"></div>
+
+    <!-- Studio Info Modal -->
+    <div id="studioModal" class="modal">
+        <div class="modal-content scrollable" style="padding:0; max-width:560px;">
+            <button class="modal-close">&times;</button>
+            <img id="modal-studio-image" src="" alt="" style="width:100%;height:220px;object-fit:cover;border-radius:var(--radius-xl) var(--radius-xl) 0 0;">
+            <div style="padding:var(--space-28);">
+                <div class="section-label" style="margin-bottom:var(--space-12);">Studio</div>
+                <h2 id="modal-studio-title" style="margin-bottom:8px;"></h2>
+                <p style="font-size:var(--font-size-sm);color:var(--color-text-muted);margin-bottom:var(--space-16);"><i class="fas fa-map-marker-alt"></i> <span id="modal-studio-location"></span></p>
+                <p id="modal-studio-long-description" style="margin-bottom:var(--space-24);"></p>
+                <div style="display:flex;gap:var(--space-12);">
+                    <button id="modal-studio-book-btn" class="btn btn-primary" style="flex:1;"><i class="fas fa-calendar-check"></i> Book Now</button>
+                    <button id="modal-studio-feedback-btn" class="btn btn-outline" style="flex:1;"><i class="fas fa-star"></i> Leave Review</button>
                 </div>
             </div>
-        </footer>
+        </div>
     </div>
 
-    <!--Modals-->
-
-    <!--Studio Info Modal-->
-    <div id="studioModal" class="modal">
+    <!-- Instrument Info Modal -->
+    <div id="instrumentModal" class="modal">
         <div class="modal-content scrollable">
             <button class="modal-close">&times;</button>
-            <img id="modal-studio-image" src="" alt="" class="modal-image">
-            <h2 id="modal-studio-title"></h2>
-            <p><strong>Location:</strong> <span id="modal-studio-location"></span></p>
-            <p id="modal-studio-long-description"></p>
-            <div class="modal-actions" style="display: flex; gap: 16px; margin-top: 24px;">
-                <button id="modal-studio-book-btn" class="btn studio-btn" style="flex: 1;">Book Now</button>
-                <button id="modal-studio-feedback-btn" class="btn btn-login" style="flex: 1;">Submit Feedback</button>
+            <img id="modal-instr-image" src="" alt="" class="modal-image">
+            <div class="section-label" style="margin-bottom:var(--space-12);">Instrument</div>
+            <h2 id="modal-instr-title" style="margin-bottom:var(--space-16);"></h2>
+            <p id="modal-instr-long-description" style="margin-bottom:var(--space-20);"></p>
+            <div style="background:var(--color-surface-raised);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-20);">
+                <p style="margin-bottom:var(--space-8);"><i class="fas fa-info-circle text-gold"></i> <strong>Fun Fact:</strong> <span id="modal-instr-fun-fact"></span></p>
+                <p style="margin-bottom:0;font-style:italic;color:var(--color-text-muted);font-size:var(--font-size-sm);"><span id="modal-instr-joke"></span></p>
             </div>
         </div>
     </div>
 
-    <!-- Instrument Info Modal-->
-<div id="instrumentModal" class="modal">
-  <div class="modal-content scrollable">
-    <button class="modal-close">&times;</button>
-    <img id="modal-instr-image" src="" alt="" class="modal-image" style="border-radius: 8px;">
-    <h2 id="modal-instr-title"></h2>
-    <p id="modal-instr-long-description"></p>
-    <div style="background: var(--color-secondary); padding: 12px; border-radius: 8px; margin-top: 16px;">
-        <p><strong>Joke:</strong> <span id="modal-instr-joke"></span></p>
-        <p style="margin-bottom: 0;"><strong>Fun Fact:</strong> <span id="modal-instr-fun-fact"></span></p>
-    </div>
-  </div>
-</div>
-
-<!-- Booking Modal -->
-<div id="bookingModal" class="modal">
-  <div class="modal-content">
-    <button class="modal-close">&times;</button>
-    <h2>Book a Studio</h2>
-    <label>Date:</label><input type="date" id="booking-date">
-    <label>Time:</label><input type="time" id="booking-time">
-    <button id="confirm-booking" class="btn">Confirm</button>
-  </div>
-</div>
-
-<!--Advanced booking modal - do we need this? check and remove -->
-<div id="advancedBookingModal" class="modal">
-  <div class="modal-content">
-    <button class="modal-close">&times;</button>
-    <h2 id="adv-booking-title">Book Studio</h2>
-    <p><strong>Location:</strong> <span id="adv-booking-location"></span></p>
-    
-    <div class="booking-form">
-        <label for="adv-booking-date">Select a Date:</label>
-        <input type="date" id="adv-booking-date" class="form-control">
-        
-        <label>Select a Time Slot:</label>
-        <div id="time-slots-container" class="time-slots-grid">
+    <!-- Advanced Booking Modal with Paystack -->
+    <div id="advancedBookingModal" class="modal">
+        <div class="modal-content" style="padding:0;max-width:580px;">
+            <div class="booking-modal-header">
+                <img id="adv-booking-img" src="" alt="" style="display:none;">
+                <div>
+                    <div class="booking-step-label">New Booking</div>
+                    <h2 id="adv-booking-title"></h2>
+                    <p style="font-size:var(--font-size-xs);color:var(--color-text-muted);"><i class="fas fa-map-marker-alt"></i> <span id="adv-booking-location"></span></p>
+                </div>
+                <button class="modal-close" style="position:static;margin-left:auto;flex-shrink:0;">&times;</button>
             </div>
-    </div>
-    
-    <button id="confirm-advanced-booking" class="btn studio-btn" style="width: 100%; margin-top: 24px;">Confirm Booking</button>
-  </div>
-</div>
-
-<!-- Login/Signup Modal -->
-<div id="authModal" class="modal">
-  <div class="modal-content modal-grid">
-    <div class="modal-form-section">
-      <button class="modal-close">&times;</button>
-      <div id="auth-forms">
-        <div id="loginForm">
-          <h2>Welcome Back</h2>
-          <p class="form-subtitle">Login to continue</p>
-          <label for="login-email">Email*:</label>
-          <input type="email" id="login-email" placeholder="you@example.com" required>
-          <label for="login-password">Password*:</label>
-          <input type="password" id="login-password" required>
-          <button id="login-btn" class="btn studio-btn" style="width:100%;">Login</button>
-          <p id="login-error" class="error"></p>
-          <p class="form-switcher">Don’t have an account? <a href="#" id="showSignup">Signup!</a></p>
+            <div class="booking-modal-body">
+                <div class="booking-progress">
+                    <div class="progress-step done" id="prog-1"></div>
+                    <div class="progress-step" id="prog-2"></div>
+                    <div class="progress-step" id="prog-3"></div>
+                </div>
+                <!-- Step 1: Date & Time -->
+                <div class="booking-step active" id="booking-step-1">
+                    <div class="booking-step-label">Step 1 of 3 &mdash; Choose Date &amp; Time</div>
+                    <div class="form-group">
+                        <label for="adv-booking-date">Select a Date</label>
+                        <input type="date" id="adv-booking-date" class="form-control">
+                    </div>
+                    <label style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-text-secondary);margin-bottom:8px;display:block;">Available Time Slots</label>
+                    <div id="time-slots-container" class="time-slots-grid"></div>
+                    <button class="btn btn-primary" style="width:100%;margin-top:var(--space-24);padding:14px;" id="step1-next" onclick="bookingNextStep(2)" disabled>
+                        Continue <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <!-- Step 2: Your Details -->
+                <div class="booking-step" id="booking-step-2">
+                    <div class="booking-step-label">Step 2 of 3 &mdash; Your Details</div>
+                    <div class="form-group">
+                        <label for="booking-name">Full Name</label>
+                        <input type="text" id="booking-name" class="form-control" placeholder="Your name">
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-email">Email Address</label>
+                        <input type="email" id="booking-email" class="form-control" placeholder="your@email.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-phone">Phone Number</label>
+                        <input type="tel" id="booking-phone" class="form-control" placeholder="+234 800 000 0000">
+                    </div>
+                    <div class="form-group">
+                        <label for="booking-notes">Additional Notes (optional)</label>
+                        <textarea id="booking-notes" class="form-control" rows="2" placeholder="Any special requirements..."></textarea>
+                    </div>
+                    <div style="display:flex;gap:var(--space-12);">
+                        <button class="btn btn-ghost" style="flex:1;" onclick="bookingNextStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
+                        <button class="btn btn-primary" style="flex:2;padding:12px;" onclick="bookingNextStep(3)">Review &amp; Pay <i class="fas fa-arrow-right"></i></button>
+                    </div>
+                </div>
+                <!-- Step 3: Payment -->
+                <div class="booking-step" id="booking-step-3">
+                    <div class="booking-step-label">Step 3 of 3 &mdash; Review &amp; Payment</div>
+                    <div class="payment-summary">
+                        <div class="payment-summary-row"><span>Studio</span><span class="price" id="pay-studio-name"></span></div>
+                        <div class="payment-summary-row"><span>Date</span><span id="pay-date"></span></div>
+                        <div class="payment-summary-row"><span>Time</span><span id="pay-time"></span></div>
+                        <div class="payment-summary-row"><span>Duration</span><span>1 hour</span></div>
+                        <div class="payment-summary-row total"><span>Total</span><span class="price" id="pay-total">&#x20A6;15,000</span></div>
+                    </div>
+                    <button class="paystack-btn" onclick="initiatePaystackPayment()">
+                        <i class="fas fa-lock"></i> Pay Securely with Paystack
+                    </button>
+                    <div class="secure-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        256-bit SSL &bull; Powered by Paystack
+                    </div>
+                    <button class="btn btn-ghost" style="width:100%;margin-top:var(--space-12);" onclick="bookingNextStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
+                </div>
+            </div>
         </div>
-        <div id="signupForm" style="display:none;">
-          <h2>Join the Vibe 🎶</h2>
-          <p class="form-subtitle">Create an account to start booking!</p>
-          <label for="signup-name">Name*:</label>
-          <input type="text" id="signup-name" placeholder="Enter your name" required>
-          <label for="signup-email">Email*:</label>
-          <input type="email" id="signup-email" placeholder="you@example.com" required>
-          <label for="signup-password">Enter password*:</label>
-          <input type="password" id="signup-password" required>
-          <label for="signup-confirm">Confirm password*:</label>
-          <input type="password" id="signup-confirm" required>
-          <button id="signup-btn" class="btn studio-btn" style="width:100%;">Signup</button>
-          <p id="signup-error" class="error"></p>
-          <p class="form-switcher">Already have an account? <a href="#" id="showLogin">Login!</a></p>
-        </div>
-      </div>
     </div>
-    <div class="modal-image-section">
-        <img src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?q=80&w=1887" alt="Vintage microphone" id="login-image">
-        <img src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=2070" alt="Headphones on vinyl records" id="signup-image" style="display: none;">
-    </div>
-  </div>
-</div>
 
-<!-- My requests modal-->
-<div id="myRequestsModal" class="modal">
-  <div class="modal-content scrollable">
-    <button class="modal-close">&times;</button>
-    <h2>My Booking Requests</h2>
-    
-    <div id="requests-list">
+    <!-- Legacy bookingModal (backward compat) -->
+    <div id="bookingModal" style="display:none;"></div>
+
+    <!-- Login/Signup Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content modal-grid">
+            <div class="modal-form-section">
+                <button class="modal-close">&times;</button>
+                <div id="auth-forms">
+                    <div id="loginForm">
+                        <div class="section-label" style="margin-bottom:var(--space-16);">Welcome Back</div>
+                        <h2 style="margin-bottom:6px;">Sign In</h2>
+                        <p class="form-subtitle">Enter your credentials to access your dashboard.</p>
+                        <div class="form-group">
+                            <label for="login-email">Email</label>
+                            <input type="email" id="login-email" placeholder="you@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="login-password">Password</label>
+                            <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+                        </div>
+                        <button id="login-btn" class="btn btn-primary" style="width:100%;padding:14px;" onclick="handleLoginSubmit(event)">
+                            <i class="fas fa-sign-in-alt"></i> Sign In
+                        </button>
+                        <p id="login-error" class="error" style="text-align:center;margin-top:12px;"></p>
+                        <p class="form-switcher">No account? <a href="#" id="showSignup">Create one</a></p>
+                    </div>
+                    <div id="signupForm" style="display:none;">
+                        <div class="section-label" style="margin-bottom:var(--space-16);">New Account</div>
+                        <h2 style="margin-bottom:6px;">Create Account</h2>
+                        <p class="form-subtitle">Join I Studio Records and start booking today.</p>
+                        <div class="form-group">
+                            <label for="signup-name">Full Name</label>
+                            <input type="text" id="signup-name" placeholder="Your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-email">Email</label>
+                            <input type="email" id="signup-email" placeholder="you@example.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-password">Password</label>
+                            <input type="password" id="signup-password" placeholder="Min. 8 characters" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="signup-confirm">Confirm Password</label>
+                            <input type="password" id="signup-confirm" required>
+                        </div>
+                        <button id="signup-btn" class="btn btn-primary" style="width:100%;padding:14px;">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </button>
+                        <p id="signup-error" class="error" style="text-align:center;margin-top:12px;"></p>
+                        <p class="form-switcher">Have an account? <a href="#" id="showLogin">Sign in</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-image-section">
+                <img src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?q=80&w=800" alt="Studio" id="login-image">
+                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=800" alt="Music" id="signup-image" style="display:none;">
+            </div>
         </div>
-  </div>
-</div>
+    </div>
 
-<!--Feedbacjs viewing modal-->
-<div id="myFeedbacksModal" class="modal">
-  <div class="modal-content scrollable">
-    <button class="modal-close">&times;</button>
-    <h2>My Feedbacks</h2>
-    
-    <div id="feedbacks-list"></div>
-  </div>
-</div>
-
-<!-- Feedback form modal-->
- <div id="feedbackModal" class="modal">
-    <div class="modal-content modal-grid">
-        <div class="modal-form-section">
+    <!-- My Requests Modal -->
+    <div id="myRequestsModal" class="modal">
+        <div class="modal-content scrollable">
             <button class="modal-close">&times;</button>
-            <h2>We'd love your feedback 💬</h2>
-            <p class="form-subtitle">Helps us understand what you'd need!</p>
-
-            <label for="feedback-name">Name*:</label>
-            <input type="text" id="feedback-name" disabled>
-
-            <label for="feedback-email">Email*:</label>
-            <input type="email" id="feedback-email" disabled>
-
-            <label for="feedback-studio">Studio:</label>
-            <select id="feedback-studio-select" class="form-control" disabled>
-                </select>
-
-            <label>Rate your experience*:</label>
-            <div class="star-rating">
-                <input type="radio" id="star5" name="rating" value="5" /><label for="star5" title="5 stars">★</label>
-                <input type="radio" id="star4" name="rating" value="4" /><label for="star4" title="4 stars">★</label>
-                <input type="radio" id="star3" name="rating" value="3" /><label for="star3" title="3 stars">★</label>
-                <input type="radio" id="star2" name="rating" value="2" /><label for="star2" title="2 stars">★</label>
-                <input type="radio" id="star1" name="rating" value="1" /><label for="star1" title="1 star">★</label>
-            </div>
-
-            <label for="feedback-message">Message*:</label>
-            <textarea id="feedback-message" rows="4" class="form-control"></textarea>
-
-            <button id="submit-feedback-btn" class="btn studio-btn" style="width:100%;">Submit</button>
-        </div>
-        <div class="modal-image-section">
-            <img src="https://images.unsplash.com/photo-1556742502-ec7c0e9f34b1?q=80&w=1887" alt="People giving feedback">
+            <div class="section-label" style="margin-bottom:var(--space-16);">My Account</div>
+            <h2 style="margin-bottom:var(--space-24);">My Booking Requests</h2>
+            <div id="requests-list"></div>
         </div>
     </div>
-</div>
+
+    <!-- My Feedbacks Modal -->
+    <div id="myFeedbacksModal" class="modal">
+        <div class="modal-content scrollable">
+            <button class="modal-close">&times;</button>
+            <div class="section-label" style="margin-bottom:var(--space-16);">My Account</div>
+            <h2 style="margin-bottom:var(--space-24);">My Reviews</h2>
+            <div id="feedbacks-list"></div>
+        </div>
+    </div>
+
+    <!-- Feedback Form Modal -->
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content modal-grid">
+            <div class="modal-form-section">
+                <button class="modal-close">&times;</button>
+                <div class="section-label" style="margin-bottom:var(--space-16);">Feedback</div>
+                <h2 style="margin-bottom:6px;">Leave a Review</h2>
+                <p class="form-subtitle">Your feedback helps us grow. Thank you!</p>
+                <div class="form-group">
+                    <label for="feedback-name">Name</label>
+                    <input type="text" id="feedback-name" class="form-control" placeholder="Your name">
+                </div>
+                <div class="form-group">
+                    <label for="feedback-email">Email</label>
+                    <input type="email" id="feedback-email" class="form-control" placeholder="your@email.com">
+                </div>
+                <div class="form-group">
+                    <label for="feedback-studio-select">Studio</label>
+                    <select id="feedback-studio-select" class="form-control"></select>
+                </div>
+                <label style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-text-secondary);display:block;margin-bottom:8px;">Your Rating</label>
+                <div class="star-rating">
+                    <input type="radio" id="star5" name="rating" value="5"><label for="star5">&#9733;</label>
+                    <input type="radio" id="star4" name="rating" value="4"><label for="star4">&#9733;</label>
+                    <input type="radio" id="star3" name="rating" value="3"><label for="star3">&#9733;</label>
+                    <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
+                    <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
+                </div>
+                <div class="form-group">
+                    <label for="feedback-message">Your Review</label>
+                    <textarea id="feedback-message" class="form-control" rows="4" placeholder="Tell us about your experience..."></textarea>
+                </div>
+                <button id="submit-feedback-btn" class="btn btn-primary" style="width:100%;padding:14px;"><i class="fas fa-paper-plane"></i> Submit Review</button>
+            </div>
+            <div class="modal-image-section">
+                <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=800" alt="Studio session">
+            </div>
+        </div>
+    </div>
 
     <!-- Scripts -->
-    <script src="components.js"></script>
-    <script src="scripts.js"></script>
-    <script src="modalLogic.js"></script>
+    <script src="components.js?v=3"></script>
+    <script src="scripts.js?v=3"></script>
+    <script src="modalLogic.js?v=3"></script>
+    
+    <script>
+        // Ensure handleLoginSubmit is globally available
+        if (typeof handleLoginSubmit === 'undefined') {
+            window.handleLoginSubmit = function(event) {
+                if (event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                
+                const email = document.getElementById('login-email').value.trim();
+                const pwd = document.getElementById('login-password').value.trim();
+                const errorEl = document.getElementById('login-error');
+                errorEl.textContent = '';
+
+                let loggedInUser = null;
+
+                if (email === 'user@example.com' && pwd === 'password123') {
+                    loggedInUser = { loggedIn: true, isAdmin: false, name: 'Gem', email };
+                } else if (email === 'admin@example.com' && pwd === 'admin123') {
+                    loggedInUser = { loggedIn: true, isAdmin: true, name: 'Admin', email };
+                }
+
+                if (loggedInUser) {
+                    localStorage.setItem('currentUser', JSON.stringify(loggedInUser));
+                    window.user = loggedInUser;
+                    
+                    if (typeof window.updateHeaderUI === 'function') {
+                        window.updateHeaderUI();
+                    }
+                    
+                    document.getElementById('login-email').value = '';
+                    document.getElementById('login-password').value = '';
+                    
+                    const modal = document.getElementById('authModal');
+                    if (modal) modal.style.display = 'none';
+                    
+                    const redirectUrl = loggedInUser.isAdmin ? 'admin.html' : 'user-dashboard.html';
+                    setTimeout(() => {
+                        location.href = redirectUrl;
+                    }, 50);
+                } else {
+                    errorEl.textContent = 'Invalid email or password.';
+                }
+            };
+        }
+    </script>
 </body>
 </html>

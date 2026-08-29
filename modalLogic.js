@@ -2,6 +2,55 @@
 let user = { loggedIn: false, isAdmin: false, name: null, email: null };
 let currentStudioForBooking = null; // To keep track of which studio is being booked
 
+// --- LOGIN HANDLER FUNCTION (can be called from onclick) ---
+function handleLoginSubmit(event) {
+    if (event) {
+        event.preventDefault();
+        event.stopPropagation();
+    }
+    
+    const email = document.getElementById('login-email').value.trim();
+    const pwd = document.getElementById('login-password').value.trim();
+    const errorEl = document.getElementById('login-error');
+    errorEl.textContent = '';
+
+    let loggedInUser = null;
+
+    // Credential validation
+    if (email === 'user@example.com' && pwd === 'password123') {
+        loggedInUser = { loggedIn: true, isAdmin: false, name: 'Gem', email };
+    } else if (email === 'admin@example.com' && pwd === 'admin123') {
+        loggedInUser = { loggedIn: true, isAdmin: true, name: 'Admin', email };
+    }
+
+    if (loggedInUser) {
+        // Save to localStorage
+        localStorage.setItem('currentUser', JSON.stringify(loggedInUser));
+        window.user = loggedInUser;
+        
+        // Update UI
+        if (typeof window.updateHeaderUI === 'function') {
+            window.updateHeaderUI();
+        }
+        
+        // Clear form fields
+        document.getElementById('login-email').value = '';
+        document.getElementById('login-password').value = '';
+        
+        // Close modal
+        const modal = document.getElementById('authModal');
+        if (modal) modal.style.display = 'none';
+        
+        // Redirect
+        const redirectUrl = loggedInUser.isAdmin ? 'admin.html' : 'user-dashboard.html';
+        setTimeout(() => {
+            location.href = redirectUrl;
+        }, 50);
+    } else {
+        errorEl.textContent = 'Invalid email or password.';
+    }
+}
+
 // --- UI UPDATE FUNCTION ---
 function updateHeaderUI() {
     const guestMenu = document.getElementById('guest-menu');
@@ -9,12 +58,17 @@ function updateHeaderUI() {
     const userGreeting = document.getElementById('user-greeting');
     if (!guestMenu || !userMenu || !userGreeting) return;
 
-    if (user.loggedIn) {
-        guestMenu.style.display = 'none';
-        userMenu.style.display = 'flex';
+    // Use window.user if available (from dashboard), otherwise use local user
+    const currentUser = window.user || user;
+    
+    if (currentUser && currentUser.loggedIn) {
+        guestMenu.style.setProperty('display', 'none', 'important');
+        userMenu.style.setProperty('display', 'flex', 'important');
+        userGreeting.textContent = `Welcome, ${currentUser.name}!`;
     } else {
-        guestMenu.style.display = 'flex';
-        userMenu.style.display = 'none';
+        guestMenu.style.setProperty('display', 'flex', 'important');
+        userMenu.style.setProperty('display', 'none', 'important');
+        userGreeting.textContent = '';
     }
 }
 
@@ -173,17 +227,22 @@ document.addEventListener('click', function(event) {
         }
     }
 
-    // --- Studio Modal "Book Now" Button -> Opens Advanced Booking ---
+    // --- Studio Modal "Book Now" Button -> Opens New Paystack Booking ---
     if (target.closest('#modal-studio-book-btn')) {
         event.preventDefault();
+        const user = window.user || {};
         if (user.loggedIn && !user.isAdmin) {
             closeModal(target);
-            openAdvancedBookingModal(currentStudioForBooking);
+            if (typeof window.openBookingModal === 'function') {
+                window.openBookingModal(currentStudioForBooking);
+            } else {
+                openAdvancedBookingModal(currentStudioForBooking);
+            }
         } else {
-            alert("Please log in to book a studio.");
             closeModal(target);
             openModal('authModal');
             showLogin();
+            if (typeof window.showToast === 'function') window.showToast('Please sign in to book a studio', 'info');
         }
     }
 
@@ -227,41 +286,62 @@ document.addEventListener('click', function(event) {
     if (target.closest('#showLogin')) { event.preventDefault(); showLogin(); }
 
     // --- Form Submissions (Login & Signup) ---
-    // LOGIN BUTTON LOGICV
-if (target.closest('#login-btn')) {
-    const email = document.getElementById('login-email').value;
-    const pwd = document.getElementById('login-password').value;
-    const errorEl = document.getElementById('login-error');
-    errorEl.textContent = '';
+    // LOGIN BUTTON LOGIC
+    if (target.id === 'login-btn' || target.closest('#login-btn')) {
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const email = document.getElementById('login-email').value.trim();
+        const pwd = document.getElementById('login-password').value.trim();
+        const errorEl = document.getElementById('login-error');
+        errorEl.textContent = '';
 
-    let loggedInUser = null;
+        let loggedInUser = null;
 
-    if (email === 'user@example.com' && pwd === 'password123') {
-        loggedInUser = { loggedIn: true, isAdmin: false, name: 'Gem', email };
-    } else if (email === 'admin@example.com' && pwd === 'admin123') {
-        loggedInUser = { loggedIn: true, isAdmin: true, name: 'Admin', email };
-    }
-
-    if (loggedInUser) {
-        localStorage.setItem('currentUser', JSON.stringify(loggedInUser)); // Save user to localStorage
-        closeModal(target);
-        if (loggedInUser.isAdmin) {
-            window.location.href = 'admin.html'; // Redirect admin to dashboard
-        } else {
-            updateHeaderUI(); // Update header for regular user
+        // Simple credential check
+        if (email === 'user@example.com' && pwd === 'password123') {
+            loggedInUser = { loggedIn: true, isAdmin: false, name: 'Gem', email };
+        } else if (email === 'admin@example.com' && pwd === 'admin123') {
+            loggedInUser = { loggedIn: true, isAdmin: true, name: 'Admin', email };
         }
-    } else {
-        errorEl.textContent = 'Invalid credentials.';
+
+        if (loggedInUser) {
+            // Save to localStorage
+            localStorage.setItem('currentUser', JSON.stringify(loggedInUser));
+            window.user = loggedInUser;
+            
+            // Update UI
+            if (typeof window.updateHeaderUI === 'function') {
+                window.updateHeaderUI();
+            }
+            
+            // Clear form fields
+            document.getElementById('login-email').value = '';
+            document.getElementById('login-password').value = '';
+            
+            // Close modal
+            const modal = document.getElementById('authModal');
+            if (modal) modal.style.display = 'none';
+            
+            // Perform redirect
+            const redirectUrl = loggedInUser.isAdmin ? 'admin.html' : 'user-dashboard.html';
+            setTimeout(() => {
+                location.href = redirectUrl;
+            }, 50);
+        } else {
+            errorEl.textContent = 'Invalid email or password.';
+        }
+        return;
     }
-}
 
 // logout button logic 
 if (target.closest('#logout-btn')) {
     event.preventDefault();
     localStorage.removeItem('currentUser'); // Remove user from localStorage
     user = { loggedIn: false, isAdmin: false, name: null, email: null };
-    updateHeaderUI();
-    alert('You have been logged out.');
+    if (window.updateHeaderUI) window.updateHeaderUI();
+    // Redirect to home page
+    window.location.href = 'index.html';
 }
 
     if (target.closest('#signup-btn')) {
@@ -275,10 +355,18 @@ if (target.closest('#logout-btn')) {
             return;
         }
         errorEl.textContent = '';
-        user = { loggedIn: true, isAdmin: false, name: name, email: email };
-        alert('Signup successful! You are now logged in.');
+        const newUser = { loggedIn: true, isAdmin: false, name: name, email: email };
+        localStorage.setItem('currentUser', JSON.stringify(newUser)); // Save to localStorage
+        window.user = newUser; // Update global user
+        if (window.updateHeaderUI) window.updateHeaderUI();
         closeModal(target);
-        updateHeaderUI();
+        // Clear form
+        document.getElementById('signup-name').value = '';
+        document.getElementById('signup-email').value = '';
+        document.getElementById('signup-password').value = '';
+        document.getElementById('signup-confirm').value = '';
+        // Redirect to user dashboard
+        window.location.href = 'user-dashboard.html';
     }
     
     

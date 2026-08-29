@@ -2,7 +2,10 @@
 let appData = {
     studios: [],
     instruments: [],
-    reviews: []
+    reviews: [],
+    users: [],
+    bookings: [],
+    feedbacks: []
 };
 
 // Carousel configuration object
@@ -11,6 +14,19 @@ const carousels = {
     instruments: { currentIndex: 0, itemsPerView: 3, totalItems: 0 },
     reviews: { currentIndex: 0, itemsPerView: 3, totalItems: 0 }
 };
+
+// Load user from localStorage on app start
+function loadUserFromStorage() {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+        try {
+            window.user = JSON.parse(storedUser);
+            if (window.updateHeaderUI) window.updateHeaderUI();
+        } catch (e) {
+            console.error('Failed to parse stored user:', e);
+        }
+    }
+}
 
 // --- DATA FETCHING AND RENDERING ---
 
@@ -21,6 +37,18 @@ async function loadData() {
         
         const data = await response.json();
         appData = data;
+        
+        // Merge with localStorage data if it exists
+        const storedAppData = localStorage.getItem('appData');
+        if (storedAppData) {
+            try {
+                const stored = JSON.parse(storedAppData);
+                appData.bookings = stored.bookings || appData.bookings;
+                appData.feedbacks = stored.feedbacks || appData.feedbacks;
+            } catch (e) {
+                console.error('Failed to merge stored app data:', e);
+            }
+        }
 
         renderStudios(appData.studios);
         renderInstruments(appData.instruments);
@@ -143,7 +171,8 @@ function moveCarousel(carouselType, direction) {
     if (carousel.currentIndex < 0) carousel.currentIndex = 0;
     if (carousel.currentIndex > maxIndex) carousel.currentIndex = maxIndex;
     
-    const translateX = -carousel.currentIndex * 320; // Using a fixed value for simplicity with gap
+    // Fixed value: carousel slide 280px + gap 24px = 304px per item
+    const translateX = -carousel.currentIndex * 304;
     track.style.transform = `translateX(${translateX}px)`;
 }
 
@@ -210,30 +239,27 @@ function initScrollAnimations() {
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0)';
+                entry.target.classList.add('visible');
                 observer.unobserve(entry.target);
             }
         });
-    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
-    
-    // We observe the parent tracks to apply animations to dynamically loaded cards
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Also observe dynamically added cards
     const tracks = document.querySelectorAll('.carousel-track, .services-grid');
     tracks.forEach(container => {
-        const observerConfig = { childList: true };
         const mutationObserver = new MutationObserver(mutations => {
             mutations.forEach(mutation => {
                 mutation.addedNodes.forEach(node => {
-                    if (node.nodeType === 1) { // It's an element
-                        node.style.opacity = '0';
-                        node.style.transform = 'translateY(20px)';
-                        node.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+                    if (node.nodeType === 1) {
                         observer.observe(node);
                     }
                 });
             });
         });
-        mutationObserver.observe(container, observerConfig);
+        mutationObserver.observe(container, { childList: true });
     });
 }
 
@@ -278,7 +304,7 @@ function initThemeSwitcher() {
 
 // --- APP INITIALIZATION ---
 async function initializeApp() {
-    console.log('JSN Music Studios app initializing...');
+    console.log('I Studio Records app initializing...');
     
     await loadData();
     
@@ -299,3 +325,213 @@ async function initializeApp() {
 window.initializeApp = initializeApp;
 window.moveCarousel = moveCarousel;
 window.toggleFAQ = toggleFAQ;
+
+// ============================================================
+// TOAST UTILITY
+// ============================================================
+function showToast(msg, type = 'gold') {
+    let container = document.getElementById('toast-container');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'toast-container';
+        document.body.appendChild(container);
+    }
+    const icons = { success: 'check-circle', error: 'exclamation-circle', info: 'info-circle', gold: 'music' };
+    const t = document.createElement('div');
+    t.className = `toast toast-${type}`;
+    t.innerHTML = `<i class="fas fa-${icons[type] || 'music'}"></i> ${msg}`;
+    container.appendChild(t);
+    setTimeout(() => { t.classList.add('toast-out'); setTimeout(() => t.remove(), 300); }, 3500);
+}
+window.showToast = showToast;
+
+// ============================================================
+// PAYSTACK BOOKING FLOW
+// ============================================================
+let bookingState = {
+    studioId: null,
+    studioName: '',
+    studioImage: '',
+    studioLocation: '',
+    date: '',
+    time: '',
+    step: 1
+};
+
+window.bookingState = bookingState;
+
+function openBookingModal(studioData) {
+    if (!studioData) return;
+    const user = JSON.parse(localStorage.getItem('currentUser') || 'null');
+    if (!user) {
+        document.getElementById('authModal').style.display = 'flex';
+        showToast('Please sign in to book a studio', 'info');
+        return;
+    }
+
+    bookingState.studioId   = studioData.id;
+    bookingState.studioName = studioData.name;
+    bookingState.studioImage = studioData.imageUrl || '';
+    bookingState.studioLocation = studioData.location || '';
+    bookingState.step = 1;
+
+    // Pre-fill user info
+    const nameEl  = document.getElementById('booking-name');
+    const emailEl = document.getElementById('booking-email');
+    if (nameEl  && user.name)  nameEl.value  = user.name;
+    if (emailEl && user.email) emailEl.value = user.email;
+
+    // Populate header
+    const img = document.getElementById('adv-booking-img');
+    if (img && studioData.imageUrl) { img.src = studioData.imageUrl; img.style.display = 'block'; }
+    document.getElementById('adv-booking-title').textContent    = studioData.name;
+    document.getElementById('adv-booking-location').textContent = studioData.location || '';
+
+    // Set min date to today
+    const dateInput = document.getElementById('adv-booking-date');
+    if (dateInput) dateInput.min = new Date().toISOString().split('T')[0];
+
+    bookingNextStep(1);
+    document.getElementById('advancedBookingModal').style.display = 'flex';
+}
+window.openBookingModal = openBookingModal;
+
+function bookingNextStep(step) {
+    // Validate step 2
+    if (step === 3) {
+        const name  = document.getElementById('booking-name')?.value.trim();
+        const email = document.getElementById('booking-email')?.value.trim();
+        if (!name || !email) { showToast('Please fill in your name and email', 'error'); return; }
+        if (!bookingState.date || !bookingState.time) { showToast('Please select a date and time first', 'error'); return; }
+        // Populate payment summary
+        document.getElementById('pay-studio-name').textContent = bookingState.studioName;
+        document.getElementById('pay-date').textContent        = bookingState.date;
+        document.getElementById('pay-time').textContent        = bookingState.time;
+    }
+    if (step === 2 && (!bookingState.date || !bookingState.time)) {
+        showToast('Please select a date and time slot first', 'error');
+        return;
+    }
+
+    bookingState.step = step;
+    document.querySelectorAll('.booking-step').forEach(s => s.classList.remove('active'));
+    const stepEl = document.getElementById('booking-step-' + step);
+    if (stepEl) stepEl.classList.add('active');
+
+    // Update progress bar
+    for (let i = 1; i <= 3; i++) {
+        const prog = document.getElementById('prog-' + i);
+        if (!prog) continue;
+        prog.className = 'progress-step';
+        if (i < step) prog.classList.add('done');
+        else if (i === step) prog.classList.add('active');
+    }
+}
+window.bookingNextStep = bookingNextStep;
+
+// Date change triggers time slot loading
+document.addEventListener('change', function(e) {
+    if (e.target && e.target.id === 'adv-booking-date') {
+        bookingState.date = e.target.value;
+        bookingState.time = '';
+        const btn = document.getElementById('step1-next');
+        if (btn) btn.disabled = true;
+        loadTimeSlotsForDate(e.target.value);
+    }
+});
+
+function loadTimeSlotsForDate(date) {
+    const container = document.getElementById('time-slots-container');
+    if (!container) return;
+    const studio = appData.studios.find(s => s.id === bookingState.studioId);
+    const unavailable = studio?.unavailableSlots?.[date] || [];
+    const slots = ['10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00','18:00','19:00','20:00'];
+
+    container.innerHTML = slots.map(slot => {
+        const isUnavailable = unavailable.includes(slot);
+        return `<button 
+            class="time-slot-btn ${isUnavailable ? '' : ''}" 
+            ${isUnavailable ? 'disabled title="Already booked"' : ''}
+            onclick="selectTimeSlot('${slot}', this)">
+            ${slot}
+        </button>`;
+    }).join('');
+}
+
+function selectTimeSlot(time, btn) {
+    document.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    bookingState.time = time;
+    const nextBtn = document.getElementById('step1-next');
+    if (nextBtn) nextBtn.disabled = false;
+}
+window.selectTimeSlot = selectTimeSlot;
+
+function initiatePaystackPayment() {
+    const email = document.getElementById('booking-email')?.value.trim();
+    const name  = document.getElementById('booking-name')?.value.trim();
+    if (!email) { showToast('Email required for payment', 'error'); return; }
+
+    const amount = 1500000; // ₦15,000 in kobo
+
+    // Check if Paystack script is loaded
+    if (typeof PaystackPop === 'undefined') {
+        // Paystack not loaded — simulate in demo mode
+        showToast('Demo mode: Payment simulated successfully! ✓', 'success');
+        completeBooking(name, email, 'DEMO-' + Date.now());
+        return;
+    }
+
+    const handler = PaystackPop.setup({
+        key: 'pk_test_your_public_key_here', // Replace with actual key
+        email: email,
+        amount: amount,
+        currency: 'NGN',
+        ref: 'ISR-' + Date.now(),
+        metadata: {
+            custom_fields: [
+                { display_name: 'Studio', value: bookingState.studioName },
+                { display_name: 'Date', value: bookingState.date },
+                { display_name: 'Time', value: bookingState.time },
+                { display_name: 'Client Name', value: name }
+            ]
+        },
+        callback: function(response) {
+            showToast('Payment successful! Booking confirmed. ✓', 'success');
+            completeBooking(name, email, response.reference);
+        },
+        onClose: function() {
+            showToast('Payment cancelled', 'info');
+        }
+    });
+    handler.openIframe();
+}
+window.initiatePaystackPayment = initiatePaystackPayment;
+
+function completeBooking(clientName, clientEmail, reference) {
+    const booking = {
+        id: 'BK-' + Date.now(),
+        userId: clientEmail,
+        userEmail: clientEmail,
+        studioId: bookingState.studioId,
+        studioName: bookingState.studioName,
+        date: bookingState.date,
+        time: bookingState.time,
+        status: 'Pending',
+        requestedDate: new Date().toISOString().split('T')[0],
+        paymentRef: reference,
+        notes: document.getElementById('booking-notes')?.value || ''
+    };
+
+    // Save to localStorage
+    const stored = JSON.parse(localStorage.getItem('appData') || '{"bookings":[],"feedbacks":[]}');
+    stored.bookings = [...(stored.bookings || []), booking];
+    localStorage.setItem('appData', JSON.stringify(stored));
+
+    // Close modal
+    const modal = document.getElementById('advancedBookingModal');
+    if (modal) modal.style.display = 'none';
+
+    showToast(`Booking confirmed for ${bookingState.studioName} on ${bookingState.date}!`, 'success');
+}
+window.completeBooking = completeBooking;

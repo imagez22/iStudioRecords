@@ -2,7 +2,8 @@
 class ComponentLoader {
     static async loadComponent(elementId, componentPath) {
         try {
-            const response = await fetch(componentPath);
+            const cacheBuster = `?t=${Date.now()}`;
+            const response = await fetch(componentPath + cacheBuster, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -65,7 +66,8 @@ class ComponentManager {
                 return false;
             }
 
-            const response = await fetch(componentFile);
+            const cacheBuster = `?t=${Date.now()}`;
+            const response = await fetch(componentFile + cacheBuster, { cache: 'no-store' });
             if (!response.ok) {
                 throw new Error(`Failed to load ${componentFile}: ${response.status}`);
             }

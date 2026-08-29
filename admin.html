@@ -1,114 +1,362 @@
 <!DOCTYPE html>
-<html lang="en" data-color-scheme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - JSN Music Studios</title>
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="admin.css">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <title>Admin Panel - I Studio Records</title>
+    <link rel="stylesheet" href="styles.css?v=3">
+    <link rel="stylesheet" href="admin.css?v=3">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 </head>
 <body>
+    <div id="toast-container"></div>
 
-    <div class="dashboard-container">
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <h2>JSN Musics</h2>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="admin-sidebar">
+            <div class="admin-sidebar-header">
+                <div class="logo">I Studio Records</div>
+                <div class="admin-sidebar-subtitle">Admin Panel</div>
             </div>
-            <nav class="sidebar-nav">
-                <a href="#" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
-                <a href="#"><i class="fas fa-music"></i> Instruments</a>
-                <a href="#"><i class="fas fa-door-open"></i> Studios</a>
-                <a href="#"><i class="fas fa-clipboard-list"></i> Requests</a>
-                <a href="#"><i class="fas fa-comment-dots"></i> Feedback</a>
-                <a href="index.html"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <nav class="admin-sidebar-nav">
+                <a href="#" class="active" onclick="showSection('dashboard', this)">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+                <a href="#" onclick="showSection('bookings', this)">
+                    <i class="fas fa-calendar-check"></i> Bookings
+                </a>
+                <a href="#" onclick="showSection('studios', this)">
+                    <i class="fas fa-door-open"></i> Studios
+                </a>
+                <a href="#" onclick="showSection('instruments', this)">
+                    <i class="fas fa-guitar"></i> Instruments
+                </a>
+                <a href="#" onclick="showSection('feedback', this)">
+                    <i class="fas fa-comment-dots"></i> Reviews
+                </a>
+                <div class="nav-divider"></div>
+                <a href="index.html">
+                    <i class="fas fa-globe"></i> View Site
+                </a>
+                <a href="index.html" id="admin-logout" onclick="adminLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </a>
             </nav>
         </aside>
 
-        <main class="main-content">
-            
+        <!-- Main -->
+        <main class="admin-main">
+            <!-- Topbar -->
+            <div class="admin-topbar">
+                <h1 id="admin-page-title">Dashboard</h1>
+                <div class="admin-topbar-actions">
+                    <span id="admin-datetime" style="font-size:0.8rem;color:var(--color-text-muted);"></span>
+                    <div style="width:36px;height:36px;border-radius:50%;background:var(--color-primary);display:flex;align-items:center;justify-content:center;font-weight:700;color:#0d0d0d;font-size:0.9rem;" id="admin-avatar">A</div>
+                </div>
+            </div>
+
+            <div class="admin-content">
+
+                <!-- ======== DASHBOARD SECTION ======== -->
+                <div class="admin-section active" id="section-dashboard">
+                    <div class="admin-stats-grid">
+                        <div class="admin-stat-card" style="--stat-color:#e6a817;--stat-bg:rgba(230,168,23,0.12);">
+                            <div class="admin-stat-header">
+                                <div>
+                                    <div class="admin-stat-value" id="stat-total-bookings">0</div>
+                                    <div class="admin-stat-label">Total Bookings</div>
+                                </div>
+                                <div class="admin-stat-icon"><i class="fas fa-calendar-check"></i></div>
+                            </div>
+                            <div class="admin-stat-trend"><i class="fas fa-arrow-up"></i> Active</div>
+                        </div>
+                        <div class="admin-stat-card" style="--stat-color:#f39c12;--stat-bg:rgba(243,156,18,0.12);">
+                            <div class="admin-stat-header">
+                                <div>
+                                    <div class="admin-stat-value" id="stat-pending">0</div>
+                                    <div class="admin-stat-label">Pending Requests</div>
+                                </div>
+                                <div class="admin-stat-icon"><i class="fas fa-clock"></i></div>
+                            </div>
+                            <div class="admin-stat-trend" style="color:var(--amber-warn);">Awaiting review</div>
+                        </div>
+                        <div class="admin-stat-card" style="--stat-color:#2ecc71;--stat-bg:rgba(46,204,113,0.12);">
+                            <div class="admin-stat-header">
+                                <div>
+                                    <div class="admin-stat-value" id="stat-studios">0</div>
+                                    <div class="admin-stat-label">Studios</div>
+                                </div>
+                                <div class="admin-stat-icon"><i class="fas fa-door-open"></i></div>
+                            </div>
+                            <div class="admin-stat-trend" style="color:var(--color-success);">All active</div>
+                        </div>
+                        <div class="admin-stat-card" style="--stat-color:#3498db;--stat-bg:rgba(52,152,219,0.12);">
+                            <div class="admin-stat-header">
+                                <div>
+                                    <div class="admin-stat-value" id="stat-reviews">0</div>
+                                    <div class="admin-stat-label">Reviews</div>
+                                </div>
+                                <div class="admin-stat-icon"><i class="fas fa-star"></i></div>
+                            </div>
+                            <div class="admin-stat-trend" style="color:var(--color-info);">Client feedback</div>
+                        </div>
+                    </div>
+
+                    <!-- Recent bookings table -->
+                    <div class="data-table-container">
+                        <div class="data-table-header">
+                            <h2>Recent Booking Requests</h2>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Studio</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-bookings-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ======== BOOKINGS SECTION ======== -->
+                <div class="admin-section" id="section-bookings">
+                    <div class="data-table-container">
+                        <div class="data-table-header">
+                            <h2><i class="fas fa-calendar-check" style="color:var(--color-primary);margin-right:8px;"></i>All Bookings</h2>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Email</th>
+                                    <th>Studio</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="all-bookings-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ======== STUDIOS SECTION ======== -->
+                <div class="admin-section" id="section-studios">
+                    <div class="data-table-container">
+                        <div class="data-table-header">
+                            <h2><i class="fas fa-door-open" style="color:var(--color-primary);margin-right:8px;"></i>Studios</h2>
+                            <button class="btn btn-primary" onclick="openStudioModal()"><i class="fas fa-plus"></i> Add Studio</button>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Location</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studios-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ======== INSTRUMENTS SECTION ======== -->
+                <div class="admin-section" id="section-instruments">
+                    <div class="data-table-container">
+                        <div class="data-table-header">
+                            <h2><i class="fas fa-guitar" style="color:var(--color-primary);margin-right:8px;"></i>Instruments</h2>
+                            <button class="btn btn-primary" onclick="openInstrumentModal()"><i class="fas fa-plus"></i> Add Instrument</button>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="instruments-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ======== FEEDBACK SECTION ======== -->
+                <div class="admin-section" id="section-feedback">
+                    <div class="data-table-container">
+                        <div class="data-table-header">
+                            <h2><i class="fas fa-comment-dots" style="color:var(--color-primary);margin-right:8px;"></i>Client Reviews</h2>
+                        </div>
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Client</th>
+                                    <th>Studio</th>
+                                    <th>Rating</th>
+                                    <th>Message</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="feedback-table"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
         </main>
     </div>
 
-<!-- Modals-->
-    <!--studios modals-->
+    <!-- Studio Form Modal -->
     <div id="studio-form-modal" class="modal">
         <div class="modal-content">
-            <button class="modal-close">&times;</button>
-            <h2 id="studio-modal-title">Add Studio</h2>
+            <button class="modal-close" onclick="closeModal('studio-form-modal')">&times;</button>
+            <div class="section-label" style="margin-bottom:16px;">Studio</div>
+            <h2 id="studio-modal-title" style="margin-bottom:24px;">Add Studio</h2>
             <form id="studio-form">
                 <input type="hidden" id="studio-id">
-
                 <div class="form-group">
-                    <label for="studio-name">Name*:</label>
+                    <label for="studio-name">Name*</label>
                     <input type="text" id="studio-name" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="studio-location">Location*:</label>
+                    <label for="studio-location">Location*</label>
                     <input type="text" id="studio-location" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="studio-image-url">Image URL*:</label>
-                    <input type="text" id="studio-image-url" class="form-control" placeholder="e.g., images/studio-f.jpg" required>
+                    <label for="studio-image-url">Image URL*</label>
+                    <input type="text" id="studio-image-url" class="form-control" placeholder="images/studio-x.jpg" required>
                 </div>
                 <div class="form-group">
-                    <label for="studio-description">Short Description*:</label>
+                    <label for="studio-description">Short Description*</label>
                     <textarea id="studio-description" rows="2" class="form-control" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="studio-long-description">Long Description*:</label>
+                    <label for="studio-long-description">Full Description*</label>
                     <textarea id="studio-long-description" rows="4" class="form-control" required></textarea>
                 </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-save" id="save-studio-btn">Save</button>
-                    <button type="button" class="btn btn-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="save-studio-btn"><i class="fas fa-save"></i> Save Studio</button>
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('studio-form-modal')">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- instruments modal-->
+    <!-- Instrument Form Modal -->
     <div id="instrument-form-modal" class="modal">
         <div class="modal-content">
-            <button class="modal-close">&times;</button>
-            <h2 id="instrument-modal-title">Add Instrument</h2>
+            <button class="modal-close" onclick="closeModal('instrument-form-modal')">&times;</button>
+            <div class="section-label" style="margin-bottom:16px;">Instrument</div>
+            <h2 id="instrument-modal-title" style="margin-bottom:24px;">Add Instrument</h2>
             <form id="instrument-form">
                 <input type="hidden" id="instrument-id">
-
                 <div class="form-group">
-                    <label for="instrument-name">Name*:</label>
+                    <label for="instrument-name">Name*</label>
                     <input type="text" id="instrument-name" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label for="instrument-image-url">Image URL*:</label>
-                    <input type="text" id="instrument-image-url" class="form-control" placeholder="e.g., images/new-instrument.jpg" required>
+                    <label for="instrument-image-url">Image URL*</label>
+                    <input type="text" id="instrument-image-url" class="form-control" placeholder="images/instrument.jpg" required>
                 </div>
                 <div class="form-group">
-                    <label for="instrument-description">Short Description*:</label>
+                    <label for="instrument-description">Short Description*</label>
                     <textarea id="instrument-description" rows="2" class="form-control" required></textarea>
                 </div>
                 <div class="form-group">
-                    <label for="instrument-long-description">Long Description:</label>
+                    <label for="instrument-long-description">Full Description</label>
                     <textarea id="instrument-long-description" rows="3" class="form-control"></textarea>
                 </div>
-                 <div class="form-group">
-                    <label for="instrument-joke">Joke:</label>
-                    <input type="text" id="instrument-joke" class="form-control">
-                </div>
-                 <div class="form-group">
-                    <label for="instrument-fun-fact">Fun Fact:</label>
+                <div class="form-group">
+                    <label for="instrument-fun-fact">Fun Fact</label>
                     <textarea id="instrument-fun-fact" rows="2" class="form-control"></textarea>
                 </div>
+                <div class="form-group">
+                    <label for="instrument-joke">Joke</label>
+                    <input type="text" id="instrument-joke" class="form-control">
+                </div>
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-save" id="save-instrument-btn">Save</button>
-                    <button type="button" class="btn btn-cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" id="save-instrument-btn"><i class="fas fa-save"></i> Save Instrument</button>
+                    <button type="button" class="btn btn-ghost" onclick="closeModal('instrument-form-modal')">Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <script src="admin.js?v=3"></script>
+    <script>
+        // Auth guard
+        const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
+        if (!adminUser.isAdmin) window.location.href = 'index.html';
 
-    <script src="admin.js"></script>
+        // Clock
+        function updateClock() {
+            const el = document.getElementById('admin-datetime');
+            if (el) el.textContent = new Date().toLocaleString('en-NG', { dateStyle: 'medium', timeStyle: 'short' });
+        }
+        updateClock();
+        setInterval(updateClock, 60000);
 
+        // Admin avatar
+        const avatar = document.getElementById('admin-avatar');
+        if (avatar && adminUser.name) avatar.textContent = adminUser.name[0].toUpperCase();
+
+        function adminLogout(e) {
+            if (e) e.preventDefault();
+            localStorage.removeItem('currentUser');
+            window.location.href = 'index.html';
+        }
+
+        function showSection(id, link) {
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.admin-sidebar-nav a').forEach(a => a.classList.remove('active'));
+            const sec = document.getElementById('section-' + id);
+            if (sec) sec.classList.add('active');
+            if (link) link.classList.add('active');
+            const titles = {dashboard:'Dashboard', bookings:'Bookings', studios:'Studios', instruments:'Instruments', feedback:'Client Reviews'};
+            document.getElementById('admin-page-title').textContent = titles[id] || id;
+        }
+
+        function closeModal(id) {
+            const m = document.getElementById(id);
+            if (m) m.style.display = 'none';
+        }
+        function openStudioModal() {
+            document.getElementById('studio-form-modal').style.display = 'flex';
+            document.getElementById('studio-modal-title').textContent = 'Add Studio';
+            document.getElementById('studio-form').reset();
+        }
+        function openInstrumentModal() {
+            document.getElementById('instrument-form-modal').style.display = 'flex';
+            document.getElementById('instrument-modal-title').textContent = 'Add Instrument';
+            document.getElementById('instrument-form').reset();
+        }
+
+        function showToast(msg, type = 'gold') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+            const t = document.createElement('div');
+            t.className = `toast toast-${type}`;
+            t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'music'}"></i> ${msg}`;
+            container.appendChild(t);
+            setTimeout(() => { t.classList.add('toast-out'); setTimeout(() => t.remove(), 300); }, 3500);
+        }
+        window.showToast = showToast;
+
+        // Close modals on backdrop click
+        document.querySelectorAll('.modal').forEach(m => {
+            m.addEventListener('click', e => { if (e.target === m) m.style.display = 'none'; });
+        });
+        document.querySelectorAll('.modal-close').forEach(b => {
+            b.addEventListener('click', () => { b.closest('.modal').style.display = 'none'; });
+        });
+    </script>
 </body>
 </html>

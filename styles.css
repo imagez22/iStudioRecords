@@ -119,7 +119,7 @@
    RESET & BASE
    ============================================================ */
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; font-size: 16px; }
+html { scroll-behavior: smooth; font-size: 16px; -webkit-text-size-adjust: 100%; }
 body {
   font-family: var(--font-body);
   line-height: var(--line-height-normal);
@@ -200,6 +200,8 @@ body {
   align-items: center;
   padding: var(--space-16) var(--space-32);
   gap: var(--space-32);
+  padding-left: max(var(--space-32), env(safe-area-inset-left));
+  padding-right: max(var(--space-32), env(safe-area-inset-right));
 }
 .logo {
   font-family: var(--font-display);
@@ -1190,24 +1192,59 @@ section.hero {
    RESPONSIVE
    ============================================================ */
 @media (max-width: 1024px) {
+  .nav-container { gap: var(--space-16); }
+  .nav-menu { gap: 0; }
+  .nav-menu a { padding-left: 10px; padding-right: 10px; }
   .footer-content { grid-template-columns: 1fr 1fr; }
   .dashboard-layout { grid-template-columns: 1fr; }
   .dashboard-sidebar { display: none; }
+  .dashboard-main { min-width: 0; }
 }
 @media (max-width: 768px) {
   .nav-menu { display: none; }
+  .nav-container { padding: 12px max(var(--space-16), env(safe-area-inset-right)) 12px max(var(--space-16), env(safe-area-inset-left)); }
+  .nav-buttons { min-width: 0; gap: 4px; }
+  #guest-menu, #user-menu { gap: 4px; }
+  #user-greeting { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+  .btn { min-height: 44px; }
+  .btn-theme-toggle { min-width: 44px; }
+  .hero-content { padding: 0 var(--space-20); }
   .hero h1 { font-size: 2.5rem; }
+  .hero-subtitle { font-size: var(--font-size-lg); }
+  .hero-actions { gap: var(--space-12); }
+  .hero-btn, .hero-btn-secondary { padding: 13px 22px; }
   .hero-stats { gap: var(--space-24); bottom: 40px; }
   .contact-content { grid-template-columns: 1fr; }
   .modal-content.modal-grid { grid-template-columns: 1fr; }
   .modal-image-section { display: none !important; }
+  .modal-content { padding: var(--space-28) var(--space-20); border-radius: var(--radius-lg); }
+  .modal-form-section { padding: var(--space-28) var(--space-20); }
   .footer-content { grid-template-columns: 1fr; }
   .footer-bottom { flex-direction: column; gap: var(--space-8); text-align: center; }
   .dashboard-main { padding: var(--space-20); }
   .container { padding: 0 var(--space-16); }
+  .section { padding: 64px 0; }
+  .section-header { margin-bottom: var(--space-32); }
+  .section-title { font-size: var(--font-size-2xl); }
+  .section-subtitle { font-size: var(--font-size-base); }
+  .contact-visual { order: -1; }
+  .dashboard-topbar { flex-direction: column; align-items: stretch; }
+  .dashboard-topbar > div:last-child { width: 100%; }
+  .dashboard-topbar > div:last-child .btn { width: 100%; }
+  .dash-section { padding: var(--space-20); }
+  .booking-card { align-items: flex-start; flex-direction: column; gap: var(--space-12); }
+  .booking-card > * { max-width: 100%; }
 }
 @media (max-width: 480px) {
-  .section { padding: 60px 0; }
+  .section { padding: 52px 0; }
+  .logo { font-size: var(--font-size-lg); }
+  #guest-menu > a:first-child, #user-greeting { display: none; }
+  #user-menu a { padding-left: 8px; padding-right: 8px; }
+  .hero { min-height: 720px !important; }
+  .hero h1 { font-size: clamp(2.15rem, 11vw, 2.5rem); }
+  .hero-subtitle { font-size: var(--font-size-base); margin-bottom: var(--space-28); }
+  .hero-actions { flex-direction: column; align-items: stretch; width: min(100%, 300px); margin: 0 auto; }
+  .hero-btn, .hero-btn-secondary { width: 100%; }
   .carousel-wrapper { margin: 0; }
   .carousel-nav { display: none; }
   .carousel-track {
@@ -1218,6 +1255,9 @@ section.hero {
   .carousel-slide { scroll-snap-align: start; }
   .hero-stats { display: none; }
   .quick-action-grid { grid-template-columns: repeat(2, 1fr); }
+  .quick-action-btn { padding: var(--space-20) var(--space-12); }
+  .data-table-header { align-items: flex-start; flex-direction: column; gap: var(--space-12); }
+  .data-table-header .btn { width: 100%; }
 }
 
 /* Utils */

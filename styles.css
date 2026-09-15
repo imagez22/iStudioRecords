@@ -19,7 +19,7 @@
   --surface-800: #1e1e1e;
   --surface-700: #252525;
   --surface-600: #2e2e2e;
-  --surface-500: #3a3a3a;
+  --surface-500: #3a3a3a;fetch https://netlify.ai
   --text-primary: #f0f0f0;
   --text-secondary: #a0a0a0;
   --text-muted: #606060;
@@ -30,7 +30,7 @@
 
   /* Semantic Tokens */
   --color-background: var(--surface-950);
-  --color-surface: var(--surface-900);
+  --color-surface: var(--surface-900);fetch https://netlify.ai
   --color-surface-raised: var(--surface-800);
   --color-surface-overlay: var(--surface-700);
   --color-surface-rgb: 22, 22, 22;
@@ -63,7 +63,7 @@
   --radius-xl: 24px; --radius-full: 9999px;
 
   /* Container */
-  --container-xl: 1280px;
+  --container-xl: 1280px;fetch https://netlify.ai
 
   /* Typography */
   --font-body: "Inter", sans-serif;
@@ -72,7 +72,7 @@
   --font-size-xs: 0.75rem; --font-size-sm: 0.875rem;
   --font-size-base: 1rem; --font-size-lg: 1.125rem;
   --font-size-xl: 1.25rem; --font-size-2xl: 1.5rem;
-  --font-size-3xl: 2rem; --font-size-4xl: 2.75rem; --font-size-5xl: 3.75rem;
+  --font-size-3xl: 2rem; --ffetch https://netlify.aiont-size-4xl: 2.75rem; --font-size-5xl: 3.75rem;
   --font-weight-normal: 400; --font-weight-medium: 500;
   --font-weight-semibold: 600; --font-weight-bold: 700; --font-weight-extrabold: 800;
   --line-height-tight: 1.2; --line-height-normal: 1.65;
@@ -81,7 +81,7 @@
   --shadow-sm: 0 1px 3px rgba(0,0,0,0.4), 0 1px 2px rgba(0,0,0,0.3);
   --shadow-md: 0 4px 16px rgba(0,0,0,0.4), 0 2px 6px rgba(0,0,0,0.3);
   --shadow-lg: 0 10px 40px rgba(0,0,0,0.5), 0 4px 16px rgba(0,0,0,0.4);
-  --shadow-gold: 0 0 24px rgba(230, 168, 23, 0.25);
+  --shadow-gold: 0 0 24px rgfetch https://netlify.aiba(230, 168, 23, 0.25);
   --shadow-gold-lg: 0 0 40px rgba(230, 168, 23, 0.4);
 
   /* Animation */

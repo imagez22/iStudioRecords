@@ -483,7 +483,7 @@ function initiatePaystackPayment() {
     }
 
     const handler = PaystackPop.setup({
-        key: 'pk_test_your_public_key_here', // Replace with actual key
+        key: window.PAYSTACK_PUBLIC_KEY || 'pk_test_2ac05768a8320b37a79875c8fe510ccd0b910bdf',
         email: email,
         amount: amount,
         currency: 'NGN',

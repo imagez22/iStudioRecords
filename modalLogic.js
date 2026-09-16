@@ -1,5 +1,17 @@
 // --- Global State ---
-let user = { loggedIn: false, isAdmin: false, name: null, email: null };
+// Initialize user from localStorage if available, otherwise set default
+let user = (() => {
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+        try {
+            return JSON.parse(storedUser);
+        } catch (e) {
+            console.error('Failed to parse stored user:', e);
+        }
+    }
+    return { loggedIn: false, isAdmin: false, name: null, email: null };
+})();
+
 let currentStudioForBooking = null; // To keep track of which studio is being booked
 
 // --- LOGIN HANDLER FUNCTION (can be called from onclick) ---
@@ -14,19 +26,17 @@ function handleLoginSubmit(event) {
     const errorEl = document.getElementById('login-error');
     errorEl.textContent = '';
 
-    let loggedInUser = null;
+    // Use the new authentication function
+    const result = typeof authenticateUser === 'function'
+        ? authenticateUser(email, pwd)
+        : null;
 
-    // Credential validation
-    if (email === 'user@example.com' && pwd === 'password123') {
-        loggedInUser = { loggedIn: true, isAdmin: false, name: 'Gem', email };
-    } else if (email === 'admin@example.com' && pwd === 'admin123') {
-        loggedInUser = { loggedIn: true, isAdmin: true, name: 'Admin', email };
-    }
-
-    if (loggedInUser) {
+    if (result && typeof result === 'object' && result.loggedIn) {
         // Save to localStorage
-        localStorage.setItem('currentUser', JSON.stringify(loggedInUser));
-        window.user = loggedInUser;
+        localStorage.setItem('currentUser', JSON.stringify(result));
+        // Update both local and window user variables
+        window.user = result;
+        user = result;
         
         // Update UI
         if (typeof window.updateHeaderUI === 'function') {
@@ -42,12 +52,12 @@ function handleLoginSubmit(event) {
         if (modal) modal.style.display = 'none';
         
         // Redirect
-        const redirectUrl = loggedInUser.isAdmin ? 'admin.html' : 'user-dashboard.html';
+        const redirectUrl = result.isAdmin ? 'admin.html' : 'user-dashboard.html';
         setTimeout(() => {
             location.href = redirectUrl;
         }, 50);
     } else {
-        errorEl.textContent = 'Invalid email or password.';
+        errorEl.textContent = result || 'Invalid email or password.';
     }
 }
 
@@ -265,6 +275,12 @@ document.addEventListener('click', function(event) {
             status: "Pending"
         };
         appData.bookings.push(newBooking);
+        
+        // Save to localStorage
+        const storedAppData = JSON.parse(localStorage.getItem('appData') || '{}');
+        if (!storedAppData.bookings) storedAppData.bookings = [];
+        storedAppData.bookings.push(newBooking);
+        localStorage.setItem('appData', JSON.stringify(storedAppData));
 
         // Close the current modal
         closeModal(target);
@@ -296,19 +312,17 @@ document.addEventListener('click', function(event) {
         const errorEl = document.getElementById('login-error');
         errorEl.textContent = '';
 
-        let loggedInUser = null;
+        // Use the new authentication function
+        const result = typeof authenticateUser === 'function' 
+            ? authenticateUser(email, pwd)
+            : null;
 
-        // Simple credential check
-        if (email === 'user@example.com' && pwd === 'password123') {
-            loggedInUser = { loggedIn: true, isAdmin: false, name: 'Gem', email };
-        } else if (email === 'admin@example.com' && pwd === 'admin123') {
-            loggedInUser = { loggedIn: true, isAdmin: true, name: 'Admin', email };
-        }
-
-        if (loggedInUser) {
+        if (result && typeof result === 'object' && result.loggedIn) {
             // Save to localStorage
-            localStorage.setItem('currentUser', JSON.stringify(loggedInUser));
-            window.user = loggedInUser;
+            localStorage.setItem('currentUser', JSON.stringify(result));
+            // Update both local and window user variables
+            window.user = result;
+            user = result;
             
             // Update UI
             if (typeof window.updateHeaderUI === 'function') {
@@ -324,12 +338,12 @@ document.addEventListener('click', function(event) {
             if (modal) modal.style.display = 'none';
             
             // Perform redirect
-            const redirectUrl = loggedInUser.isAdmin ? 'admin.html' : 'user-dashboard.html';
+            const redirectUrl = result.isAdmin ? 'admin.html' : 'user-dashboard.html';
             setTimeout(() => {
                 location.href = redirectUrl;
             }, 50);
         } else {
-            errorEl.textContent = 'Invalid email or password.';
+            errorEl.textContent = result || 'Invalid email or password.';
         }
         return;
     }
@@ -338,35 +352,53 @@ document.addEventListener('click', function(event) {
 if (target.closest('#logout-btn')) {
     event.preventDefault();
     localStorage.removeItem('currentUser'); // Remove user from localStorage
+    // Clear both local and window user variables
     user = { loggedIn: false, isAdmin: false, name: null, email: null };
+    window.user = { loggedIn: false, isAdmin: false, name: null, email: null };
     if (window.updateHeaderUI) window.updateHeaderUI();
     // Redirect to home page
     window.location.href = 'index.html';
 }
 
     if (target.closest('#signup-btn')) {
-        const name = document.getElementById('signup-name').value;
-        const email = document.getElementById('signup-email').value;
+        const name = document.getElementById('signup-name').value.trim();
+        const email = document.getElementById('signup-email').value.trim();
         const pwd = document.getElementById('signup-password').value;
         const cpw = document.getElementById('signup-confirm').value;
         const errorEl = document.getElementById('signup-error');
-        if (!name || !email || !pwd || !cpw || !email.includes('@') || pwd.length < 6 || pwd !== cpw) {
-            errorEl.textContent = 'Please check your details. Passwords must match and be 6+ characters.';
+        
+        // Validate passwords match
+        if (pwd !== cpw) {
+            errorEl.textContent = 'Passwords do not match.';
             return;
         }
-        errorEl.textContent = '';
-        const newUser = { loggedIn: true, isAdmin: false, name: name, email: email };
-        localStorage.setItem('currentUser', JSON.stringify(newUser)); // Save to localStorage
-        window.user = newUser; // Update global user
-        if (window.updateHeaderUI) window.updateHeaderUI();
-        closeModal(target);
-        // Clear form
-        document.getElementById('signup-name').value = '';
-        document.getElementById('signup-email').value = '';
-        document.getElementById('signup-password').value = '';
-        document.getElementById('signup-confirm').value = '';
-        // Redirect to user dashboard
-        window.location.href = 'user-dashboard.html';
+        
+        // Use the new registration function
+        const result = typeof registerUser === 'function'
+            ? registerUser(name, email, pwd)
+            : null;
+
+        if (result && typeof result === 'object' && result.loggedIn) {
+            errorEl.textContent = '';
+            // Save to localStorage
+            localStorage.setItem('currentUser', JSON.stringify(result));
+            // Update both local and window user variables
+            window.user = result;
+            user = result;
+            if (window.updateHeaderUI) window.updateHeaderUI();
+            closeModal(target);
+            // Clear form
+            document.getElementById('signup-name').value = '';
+            document.getElementById('signup-email').value = '';
+            document.getElementById('signup-password').value = '';
+            document.getElementById('signup-confirm').value = '';
+            // Redirect to user dashboard
+            setTimeout(() => {
+                window.location.href = 'user-dashboard.html';
+            }, 100);
+        } else {
+            errorEl.textContent = result || 'Registration failed. Please try again.';
+        }
     }
     
     
@@ -419,6 +451,12 @@ if (target.closest('#logout-btn')) {
 
         // Add to our mock database
         appData.feedbacks.push(newFeedback);
+        
+        // Save to localStorage
+        const storedAppData = JSON.parse(localStorage.getItem('appData') || '{}');
+        if (!storedAppData.feedbacks) storedAppData.feedbacks = [];
+        storedAppData.feedbacks.push(newFeedback);
+        localStorage.setItem('appData', JSON.stringify(storedAppData));
 
         alert("Thank you for your feedback!");
         closeModal(target);
@@ -431,4 +469,14 @@ if (target.closest('#logout-btn')) {
 });
 
 // Run on initial page load to set the correct header state
-window.addEventListener('load', updateHeaderUI);
+window.addEventListener('load', function() {
+    // Ensure user is loaded from storage
+    if (typeof loadUserFromStorage === 'function') {
+        loadUserFromStorage();
+    }
+    // Sync the local user with window.user if they differ
+    if (window.user && window.user.loggedIn) {
+        user = window.user;
+    }
+    updateHeaderUI();
+});

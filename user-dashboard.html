@@ -190,6 +190,8 @@
     </div>
 
     <script src="components.js?v=3"></script>
+    <script src="auth.js?v=3"></script>
+    <script src="scripts.js?v=3"></script>
     <script src="modalLogic.js?v=3"></script>
     <script>
         let currentUser = null;
@@ -262,9 +264,29 @@
                 const res  = await fetch('db.json?v=' + Date.now());
                 const data = await res.json();
 
-                const bookings  = data.bookings.filter(b => b.userEmail === email);
-                const reviews   = data.feedbacks.filter(f => f.userEmail === email);
-                const pending   = bookings.filter(b => b.status === 'Pending').length;
+                // Merge with localStorage bookings and feedbacks
+                let bookings = data.bookings ? data.bookings.filter(b => b.userEmail === email) : [];
+                let reviews = data.feedbacks ? data.feedbacks.filter(f => f.userEmail === email) : [];
+                
+                // Also load from localStorage if available
+                const storedAppData = localStorage.getItem('appData');
+                if (storedAppData) {
+                    try {
+                        const stored = JSON.parse(storedAppData);
+                        if (stored.bookings && Array.isArray(stored.bookings)) {
+                            const storedBookings = stored.bookings.filter(b => b.userEmail === email);
+                            bookings = [...bookings, ...storedBookings];
+                        }
+                        if (stored.feedbacks && Array.isArray(stored.feedbacks)) {
+                            const storedReviews = stored.feedbacks.filter(f => f.userEmail === email);
+                            reviews = [...reviews, ...storedReviews];
+                        }
+                    } catch(e) {
+                        console.error('Failed to parse stored app data:', e);
+                    }
+                }
+
+                const pending = bookings.filter(b => b.status === 'Pending').length;
 
                 document.getElementById('total-bookings').textContent  = bookings.length;
                 document.getElementById('pending-bookings').textContent = pending;
@@ -333,6 +355,14 @@
         }
 
         document.addEventListener('DOMContentLoaded', initDashboard);
+        
+        // Also call initDashboard directly in case DOMContentLoaded already fired
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initDashboard);
+        } else {
+            // DOM is already loaded
+            initDashboard();
+        }
 
         // Logout button in header
         document.addEventListener('click', e => {

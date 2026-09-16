@@ -140,63 +140,11 @@
     }
   ],
   
-"bookings": [
-    {
-      "id": 1,
-      "userEmail": "user@example.com",
-      "studioName": "Studio A",
-      "requestDate": "2025-09-28",
-      "bookingDate": "2025-10-05",
-      "bookingTime": "14:00",
-      "status": "Approved"
-    },
-    {
-      "id": 2,
-      "userEmail": "user@example.com",
-      "studioName": "Studio C",
-      "requestDate": "2025-09-29",
-      "bookingDate": "2025-10-10",
-      "bookingTime": "18:00",
-      "status": "Pending"
-    },
-    {
-      "id": 3,
-      "userEmail": "user@example.com",
-      "studioName": "Studio B",
-      "requestDate": "2025-09-25",
-      "bookingDate": "2025-10-01",
-      "bookingTime": "11:00",
-      "status": "Rejected"
-    }
-  ],
-"feedbacks": [
-    {
-      "id": 1,
-      "userEmail": "user@example.com",
-      "studioName": "Studio A",
-      "date": "2025-10-06",
-      "rating": 5,
-      "message": "The session in Studio A was incredible! The acoustics are top-notch and the engineer was super helpful. Will definitely be back."
-    },
-    {
-      "id": 2,
-      "userEmail": "user@example.com",
-      "studioName": "Studio C",
-      "date": "2025-09-15",
-      "rating": 4,
-      "message": "A great, cozy space for solo vocal work. Everything was set up and ready to go when I arrived."
-    }
-  ],
+"bookings": [],
+"feedbacks": [],
   "users": [
     {
       "id": 1,
-      "name": "Gem",
-      "email": "user@example.com",
-      "password": "password123",
-      "isAdmin": false
-    },
-    {
-      "id": 2,
       "name": "Admin",
       "email": "admin@example.com",
       "password": "admin123",

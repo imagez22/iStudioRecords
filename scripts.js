@@ -38,6 +38,11 @@ async function loadData() {
         const data = await response.json();
         appData = data;
         
+        // Initialize users from db.json (first-time setup)
+        if (typeof initializeUsersFromDB === 'function') {
+            initializeUsersFromDB(data.users || []);
+        }
+        
         // Merge with localStorage data if it exists
         const storedAppData = localStorage.getItem('appData');
         if (storedAppData) {
@@ -305,6 +310,9 @@ function initThemeSwitcher() {
 // --- APP INITIALIZATION ---
 async function initializeApp() {
     console.log('I Studio Records app initializing...');
+    
+    // Load current user from storage first
+    loadUserFromStorage();
     
     await loadData();
     

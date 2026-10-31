@@ -1,0 +1,5 @@
+# Minimal Supabase CLI config. `npx supabase link --project-ref <ref>` connects it to your project.
+project_id = "istudiorecords"
+
+[functions.book]
+verify_jwt = true

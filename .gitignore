@@ -29,3 +29,4 @@ build/
 
 # Test coverage
 coverage/
+tests/e2e/artifacts/

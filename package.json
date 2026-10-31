@@ -1,7 +1,7 @@
 {
   "name": "i-studio-records",
   "version": "1.0.0",
-  "description": "Professional music studio booking app — I Studio Records, Ghana",
+  "description": "Professional music studio booking app \u2014 I Studio Records, Ghana",
   "author": "Akli Joshua Eric Yao <aklijoshuaericy@gmail.com>",
   "license": "ISC",
   "homepage": "https://imagez22.github.io/iStudioRecords",
@@ -11,14 +11,24 @@
   },
   "scripts": {
     "start": "python3 -m http.server 8000",
-    "test": "jest",
+    "test": "jest && node --test tests/*.test.mjs",
     "deploy": "gh api repos/imagez22/iStudioRecords/pages --method POST -f source.branch=main -f source.path=/ 2>/dev/null || echo 'Pages already enabled'",
     "predeploy": "git add -A && git diff --cached --quiet || git commit -m 'chore: prod build'",
-    "push": "git push origin main"
+    "push": "git push origin main",
+    "test:unit": "jest",
+    "test:db": "node --test tests/*.test.mjs",
+    "test:e2e": "node tests/e2e/run.mjs"
   },
   "devDependencies": {
-    "jest": "^30.1.3"
+    "@electric-sql/pglite": "^0.5.8",
+    "@supabase/supabase-js": "^2.117.2",
+    "jest": "^30.1.3",
+    "playwright-core": "^1.63.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "<rootDir>/tests/**/*.test.js"
+    ]
   }
 }
-
-

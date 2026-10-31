@@ -1,11 +1,13 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-color-scheme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e0e11'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%23e6a817'/%3E%3C/svg%3E">
     <title>Page Not Found - I Studio Records</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=3">
+    <script>try{document.documentElement.setAttribute('data-color-scheme',localStorage.getItem('theme')||'dark')}catch(e){}</script>
+    <link rel="stylesheet" href="styles.css?v=5">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
@@ -26,11 +28,6 @@
         .notfound p { color: var(--color-text-secondary); margin-bottom: 32px; }
         .notfound-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
     </style>
-    <script>
-        /* Redirect SPA routes for GitHub Pages */
-        const path = sessionStorage.redirect;
-        if (path) { delete sessionStorage.redirect; history.replaceState(null, null, path); }
-    </script>
 </head>
 <body>
     <div class="notfound">

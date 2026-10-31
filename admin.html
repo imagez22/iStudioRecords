@@ -1,235 +1,238 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-color-scheme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta name="robots" content="noindex">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e0e11'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%23e6a817'/%3E%3C/svg%3E">
     <title>Admin Panel - I Studio Records</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=3">
-    <link rel="stylesheet" href="admin.css?v=3">
+    <script>try{document.documentElement.setAttribute('data-color-scheme',localStorage.getItem('theme')||'dark')}catch(e){}</script>
+    <script>
+        // Auth guard — runs before anything renders
+        try {
+            var s = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            if (!s || !s.loggedIn) window.location.replace('index.html?login=1');
+            else if (!s.isAdmin) window.location.replace('user-dashboard.html');
+        } catch (e) { window.location.replace('index.html?login=1'); }
+    </script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="styles.css?v=5">
+    <link rel="stylesheet" href="admin.css?v=5">
 </head>
-<body>
-    <div id="toast-container"></div>
+<body class="admin-body">
+    <div id="toast-container" aria-live="polite"></div>
 
     <div class="admin-container">
-        <!-- Sidebar -->
         <aside class="admin-sidebar">
             <div class="admin-sidebar-header">
-                <div class="logo">I Studio Records</div>
+                <a href="index.html" class="logo">I Studio Records</a>
                 <div class="admin-sidebar-subtitle">Admin Panel</div>
             </div>
-            <nav class="admin-sidebar-nav">
-                <a href="#" class="active" onclick="showSection('dashboard', this)">
-                    <i class="fas fa-tachometer-alt"></i> Dashboard
-                </a>
-                <a href="#" onclick="showSection('bookings', this)">
-                    <i class="fas fa-calendar-check"></i> Bookings
-                </a>
-                <a href="#" onclick="showSection('studios', this)">
-                    <i class="fas fa-door-open"></i> Studios
-                </a>
-                <a href="#" onclick="showSection('instruments', this)">
-                    <i class="fas fa-guitar"></i> Instruments
-                </a>
-                <a href="#" onclick="showSection('feedback', this)">
-                    <i class="fas fa-comment-dots"></i> Reviews
-                </a>
+            <nav class="admin-sidebar-nav" aria-label="Admin sections">
+                <a href="#dashboard" class="active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                <a href="#bookings" data-section="bookings"><i class="fas fa-calendar-check"></i> Bookings <span class="nav-count" id="nav-pending-count"></span></a>
+                <a href="#studios" data-section="studios"><i class="fas fa-door-open"></i> Studios</a>
+                <a href="#instruments" data-section="instruments"><i class="fas fa-guitar"></i> Instruments</a>
+                <a href="#feedback" data-section="feedback"><i class="fas fa-comment-dots"></i> Reviews</a>
+                <a href="#users" data-section="users"><i class="fas fa-users"></i> Users</a>
+                <a href="#payments" data-section="payments"><i class="fas fa-receipt"></i> Payment Issues <span class="nav-count nav-count-danger" id="nav-issues-count"></span></a>
                 <div class="nav-divider"></div>
-                <a href="index.html">
-                    <i class="fas fa-globe"></i> View Site
-                </a>
-                <a href="index.html" id="admin-logout" onclick="adminLogout()">
-                    <i class="fas fa-sign-out-alt"></i> Logout
-                </a>
+                <a href="index.html"><i class="fas fa-globe"></i> View Site</a>
+                <a href="#" data-action="logout" class="admin-logout"><i class="fas fa-sign-out-alt"></i> Logout</a>
             </nav>
         </aside>
 
-        <!-- Main -->
-        <main class="admin-main">
-            <!-- Topbar -->
+        <main class="admin-main" id="main">
             <div class="admin-topbar">
                 <h1 id="admin-page-title">Dashboard</h1>
                 <div class="admin-topbar-actions">
-                    <span id="admin-datetime" style="font-size:0.8rem;color:var(--color-text-muted);"></span>
-                    <div style="width:36px;height:36px;border-radius:50%;background:var(--color-primary);display:flex;align-items:center;justify-content:center;font-weight:700;color:#0d0d0d;font-size:0.9rem;" id="admin-avatar">A</div>
+                    <span id="admin-datetime" class="text-muted text-sm"></span>
+                    <button type="button" class="btn btn-ghost btn-icon" id="refresh-btn" title="Refresh data" aria-label="Refresh data"><i class="fas fa-sync-alt"></i></button>
+                    <button type="button" class="btn btn-theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button>
+                    <div class="admin-avatar" id="admin-avatar">A</div>
                 </div>
             </div>
 
             <div class="admin-content">
-
-                <!-- ======== DASHBOARD SECTION ======== -->
+                <!-- DASHBOARD -->
                 <div class="admin-section active" id="section-dashboard">
+                    <a href="#payments" data-section="payments" class="issues-alert" id="issues-alert" hidden>
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <span><strong id="issues-alert-count">0</strong> paid booking(s) could not be saved and need a refund or rebooking.</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
                     <div class="admin-stats-grid">
                         <div class="admin-stat-card" style="--stat-color:#e6a817;--stat-bg:rgba(230,168,23,0.12);">
                             <div class="admin-stat-header">
-                                <div>
-                                    <div class="admin-stat-value" id="stat-total-bookings">0</div>
-                                    <div class="admin-stat-label">Total Bookings</div>
-                                </div>
+                                <div><div class="admin-stat-value" id="stat-total-bookings">0</div><div class="admin-stat-label">Total Bookings</div></div>
                                 <div class="admin-stat-icon"><i class="fas fa-calendar-check"></i></div>
                             </div>
-                            <div class="admin-stat-trend"><i class="fas fa-arrow-up"></i> Active</div>
+                            <div class="admin-stat-trend" id="stat-upcoming-trend">0 upcoming</div>
                         </div>
                         <div class="admin-stat-card" style="--stat-color:#f39c12;--stat-bg:rgba(243,156,18,0.12);">
                             <div class="admin-stat-header">
-                                <div>
-                                    <div class="admin-stat-value" id="stat-pending">0</div>
-                                    <div class="admin-stat-label">Pending Requests</div>
-                                </div>
+                                <div><div class="admin-stat-value" id="stat-pending">0</div><div class="admin-stat-label">Pending Requests</div></div>
                                 <div class="admin-stat-icon"><i class="fas fa-clock"></i></div>
                             </div>
                             <div class="admin-stat-trend" style="color:var(--amber-warn);">Awaiting review</div>
                         </div>
                         <div class="admin-stat-card" style="--stat-color:#2ecc71;--stat-bg:rgba(46,204,113,0.12);">
                             <div class="admin-stat-header">
-                                <div>
-                                    <div class="admin-stat-value" id="stat-studios">0</div>
-                                    <div class="admin-stat-label">Studios</div>
-                                </div>
-                                <div class="admin-stat-icon"><i class="fas fa-door-open"></i></div>
+                                <div><div class="admin-stat-value" id="stat-revenue">GH₵0</div><div class="admin-stat-label">Paid Revenue</div></div>
+                                <div class="admin-stat-icon"><i class="fas fa-coins"></i></div>
                             </div>
-                            <div class="admin-stat-trend" style="color:var(--color-success);">All active</div>
+                            <div class="admin-stat-trend">Verified Paystack payments</div>
                         </div>
                         <div class="admin-stat-card" style="--stat-color:#3498db;--stat-bg:rgba(52,152,219,0.12);">
                             <div class="admin-stat-header">
-                                <div>
-                                    <div class="admin-stat-value" id="stat-reviews">0</div>
-                                    <div class="admin-stat-label">Reviews</div>
-                                </div>
+                                <div><div class="admin-stat-value" id="stat-reviews">0</div><div class="admin-stat-label">Reviews</div></div>
                                 <div class="admin-stat-icon"><i class="fas fa-star"></i></div>
                             </div>
-                            <div class="admin-stat-trend" style="color:var(--color-info);">Client feedback</div>
+                            <div class="admin-stat-trend" style="color:var(--color-info);" id="stat-rating">No ratings yet</div>
                         </div>
                     </div>
 
-                    <!-- Recent bookings table -->
                     <div class="data-table-container">
                         <div class="data-table-header">
                             <h2>Recent Booking Requests</h2>
+                            <a href="#bookings" class="btn btn-ghost btn-sm" data-section="bookings">View all</a>
                         </div>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Client</th>
-                                    <th>Studio</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="recent-bookings-table"></tbody>
-                        </table>
+                        <div class="table-scroll">
+                            <table class="data-table">
+                                <thead><tr><th>Client</th><th>Studio</th><th>Date</th><th>Time</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="recent-bookings-table"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ======== BOOKINGS SECTION ======== -->
+                <!-- BOOKINGS -->
                 <div class="admin-section" id="section-bookings">
                     <div class="data-table-container">
                         <div class="data-table-header">
-                            <h2><i class="fas fa-calendar-check" style="color:var(--color-primary);margin-right:8px;"></i>All Bookings</h2>
+                            <h2><i class="fas fa-calendar-check text-gold"></i> All Bookings</h2>
+                            <div class="table-tools">
+                                <input type="search" id="booking-search" class="form-control" placeholder="Search name, email, ref…" aria-label="Search bookings">
+                                <select id="booking-status-filter" class="form-control" aria-label="Filter by status">
+                                    <option value="">All statuses</option>
+                                    <option>Pending</option><option>Approved</option><option>Completed</option><option>Rejected</option><option>Cancelled</option>
+                                </select>
+                                <button type="button" class="btn btn-ghost btn-sm" id="export-csv-btn"><i class="fas fa-file-csv"></i> Export CSV</button>
+                            </div>
                         </div>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Client</th>
-                                    <th>Email</th>
-                                    <th>Studio</th>
-                                    <th>Date</th>
-                                    <th>Time</th>
-                                    <th>Status</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="all-bookings-table"></tbody>
-                        </table>
+                        <div class="table-scroll">
+                            <table class="data-table">
+                                <thead><tr><th>Client</th><th>Studio / Session</th><th>Date</th><th>Time</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+                                <tbody id="all-bookings-table"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ======== STUDIOS SECTION ======== -->
+                <!-- STUDIOS -->
                 <div class="admin-section" id="section-studios">
                     <div class="data-table-container">
                         <div class="data-table-header">
-                            <h2><i class="fas fa-door-open" style="color:var(--color-primary);margin-right:8px;"></i>Studios</h2>
-                            <button class="btn btn-primary" onclick="openStudioModal()"><i class="fas fa-plus"></i> Add Studio</button>
+                            <h2><i class="fas fa-door-open text-gold"></i> Studios</h2>
+                            <button type="button" class="btn btn-primary btn-sm" id="add-studio-btn"><i class="fas fa-plus"></i> Add Studio</button>
                         </div>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Location</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="studios-table"></tbody>
-                        </table>
+                        <div class="table-scroll">
+                            <table class="data-table">
+                                <thead><tr><th>Name</th><th>Description</th><th>Location</th><th>Rate</th><th>Actions</th></tr></thead>
+                                <tbody id="studios-table"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ======== INSTRUMENTS SECTION ======== -->
+                <!-- INSTRUMENTS -->
                 <div class="admin-section" id="section-instruments">
                     <div class="data-table-container">
                         <div class="data-table-header">
-                            <h2><i class="fas fa-guitar" style="color:var(--color-primary);margin-right:8px;"></i>Instruments</h2>
-                            <button class="btn btn-primary" onclick="openInstrumentModal()"><i class="fas fa-plus"></i> Add Instrument</button>
+                            <h2><i class="fas fa-guitar text-gold"></i> Instruments</h2>
+                            <button type="button" class="btn btn-primary btn-sm" id="add-instrument-btn"><i class="fas fa-plus"></i> Add Instrument</button>
                         </div>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Description</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody id="instruments-table"></tbody>
-                        </table>
+                        <div class="table-scroll">
+                            <table class="data-table">
+                                <thead><tr><th>Name</th><th>Description</th><th>Actions</th></tr></thead>
+                                <tbody id="instruments-table"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
-                <!-- ======== FEEDBACK SECTION ======== -->
+                <!-- REVIEWS -->
                 <div class="admin-section" id="section-feedback">
                     <div class="data-table-container">
                         <div class="data-table-header">
-                            <h2><i class="fas fa-comment-dots" style="color:var(--color-primary);margin-right:8px;"></i>Client Reviews</h2>
+                            <h2><i class="fas fa-comment-dots text-gold"></i> Client Reviews</h2>
+                            <span class="text-muted text-sm">Featured reviews appear in the site's testimonials.</span>
                         </div>
-                        <table class="data-table">
-                            <thead>
-                                <tr>
-                                    <th>Client</th>
-                                    <th>Studio</th>
-                                    <th>Rating</th>
-                                    <th>Message</th>
-                                    <th>Date</th>
-                                </tr>
-                            </thead>
-                            <tbody id="feedback-table"></tbody>
-                        </table>
+                        <div class="table-scroll">
+                            <table class="data-table">
+                                <thead><tr><th>Client</th><th>Studio</th><th>Rating</th><th>Message</th><th>Date</th><th>Actions</th></tr></thead>
+                                <tbody id="feedback-table"></tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
 
+                <!-- PAYMENT ISSUES -->
+                <div class="admin-section" id="section-payments">
+                    <div class="data-table-container">
+                        <div class="data-table-header">
+                            <h2><i class="fas fa-receipt text-gold"></i> Payment Issues</h2>
+                            <span class="text-muted text-sm">Payments that succeeded but lost their slot. Refund in Paystack, then mark resolved.</span>
+                        </div>
+                        <div class="table-scroll">
+                            <table class="data-table">
+                                <thead><tr><th>Paystack ref</th><th>Amount</th><th>Reason</th><th>Date</th><th>Status</th></tr></thead>
+                                <tbody id="payments-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- USERS -->
+                <div class="admin-section" id="section-users">
+                    <div class="data-table-container">
+                        <div class="data-table-header">
+                            <h2><i class="fas fa-users text-gold"></i> Registered Users</h2>
+                        </div>
+                        <div class="table-scroll">
+                            <table class="data-table">
+                                <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Bookings</th><th>Joined</th></tr></thead>
+                                <tbody id="users-table"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
 
     <!-- Studio Form Modal -->
-    <div id="studio-form-modal" class="modal">
+    <div id="studio-form-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="studio-modal-title" aria-hidden="true">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('studio-form-modal')">&times;</button>
-            <div class="section-label" style="margin-bottom:16px;">Studio</div>
-            <h2 id="studio-modal-title" style="margin-bottom:24px;">Add Studio</h2>
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+            <div class="section-label">Studio</div>
+            <h2 id="studio-modal-title">Add Studio</h2>
             <form id="studio-form">
                 <input type="hidden" id="studio-id">
                 <div class="form-group">
                     <label for="studio-name">Name*</label>
-                    <input type="text" id="studio-name" class="form-control" required>
+                    <input type="text" id="studio-name" class="form-control" maxlength="60" required>
                 </div>
-                <div class="form-group">
-                    <label for="studio-location">Location*</label>
-                    <input type="text" id="studio-location" class="form-control" required>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="studio-location">Location*</label>
+                        <input type="text" id="studio-location" class="form-control" maxlength="80" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="studio-rate">Hourly rate (GH₵)*</label>
+                        <input type="number" id="studio-rate" class="form-control" min="1" step="1" required>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label for="studio-image-url">Image URL*</label>
@@ -237,7 +240,7 @@
                 </div>
                 <div class="form-group">
                     <label for="studio-description">Short Description*</label>
-                    <textarea id="studio-description" rows="2" class="form-control" required></textarea>
+                    <textarea id="studio-description" rows="2" class="form-control" maxlength="120" required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="studio-long-description">Full Description*</label>
@@ -245,23 +248,23 @@
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary" id="save-studio-btn"><i class="fas fa-save"></i> Save Studio</button>
-                    <button type="button" class="btn btn-ghost" onclick="closeModal('studio-form-modal')">Cancel</button>
+                    <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Instrument Form Modal -->
-    <div id="instrument-form-modal" class="modal">
+    <div id="instrument-form-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="instrument-modal-title" aria-hidden="true">
         <div class="modal-content">
-            <button class="modal-close" onclick="closeModal('instrument-form-modal')">&times;</button>
-            <div class="section-label" style="margin-bottom:16px;">Instrument</div>
-            <h2 id="instrument-modal-title" style="margin-bottom:24px;">Add Instrument</h2>
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+            <div class="section-label">Instrument</div>
+            <h2 id="instrument-modal-title">Add Instrument</h2>
             <form id="instrument-form">
                 <input type="hidden" id="instrument-id">
                 <div class="form-group">
                     <label for="instrument-name">Name*</label>
-                    <input type="text" id="instrument-name" class="form-control" required>
+                    <input type="text" id="instrument-name" class="form-control" maxlength="60" required>
                 </div>
                 <div class="form-group">
                     <label for="instrument-image-url">Image URL*</label>
@@ -269,7 +272,7 @@
                 </div>
                 <div class="form-group">
                     <label for="instrument-description">Short Description*</label>
-                    <textarea id="instrument-description" rows="2" class="form-control" required></textarea>
+                    <textarea id="instrument-description" rows="2" class="form-control" maxlength="120" required></textarea>
                 </div>
                 <div class="form-group">
                     <label for="instrument-long-description">Full Description</label>
@@ -285,82 +288,18 @@
                 </div>
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary" id="save-instrument-btn"><i class="fas fa-save"></i> Save Instrument</button>
-                    <button type="button" class="btn btn-ghost" onclick="closeModal('instrument-form-modal')">Cancel</button>
+                    <button type="button" class="btn btn-ghost" data-close-modal>Cancel</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <script src="components.js?v=3"></script>
-    <script src="auth.js?v=3"></script>
-    <script src="scripts.js?v=3"></script>
-    <script src="admin.js?v=3"></script>
-    <script>
-        // Auth guard
-        const adminUser = JSON.parse(localStorage.getItem('currentUser') || '{}');
-        if (!adminUser.isAdmin) window.location.href = 'index.html';
-
-        // Clock
-        function updateClock() {
-            const el = document.getElementById('admin-datetime');
-            if (el) el.textContent = new Date().toLocaleString('en-NG', { dateStyle: 'medium', timeStyle: 'short' });
-        }
-        updateClock();
-        setInterval(updateClock, 60000);
-
-        // Admin avatar
-        const avatar = document.getElementById('admin-avatar');
-        if (avatar && adminUser.name) avatar.textContent = adminUser.name[0].toUpperCase();
-
-        function adminLogout(e) {
-            if (e) e.preventDefault();
-            localStorage.removeItem('currentUser');
-            window.location.href = 'index.html';
-        }
-
-        function showSection(id, link) {
-            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.admin-sidebar-nav a').forEach(a => a.classList.remove('active'));
-            const sec = document.getElementById('section-' + id);
-            if (sec) sec.classList.add('active');
-            if (link) link.classList.add('active');
-            const titles = {dashboard:'Dashboard', bookings:'Bookings', studios:'Studios', instruments:'Instruments', feedback:'Client Reviews'};
-            document.getElementById('admin-page-title').textContent = titles[id] || id;
-        }
-
-        function closeModal(id) {
-            const m = document.getElementById(id);
-            if (m) m.style.display = 'none';
-        }
-        function openStudioModal() {
-            document.getElementById('studio-form-modal').style.display = 'flex';
-            document.getElementById('studio-modal-title').textContent = 'Add Studio';
-            document.getElementById('studio-form').reset();
-        }
-        function openInstrumentModal() {
-            document.getElementById('instrument-form-modal').style.display = 'flex';
-            document.getElementById('instrument-modal-title').textContent = 'Add Instrument';
-            document.getElementById('instrument-form').reset();
-        }
-
-        function showToast(msg, type = 'gold') {
-            const container = document.getElementById('toast-container');
-            if (!container) return;
-            const t = document.createElement('div');
-            t.className = `toast toast-${type}`;
-            t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'music'}"></i> ${msg}`;
-            container.appendChild(t);
-            setTimeout(() => { t.classList.add('toast-out'); setTimeout(() => t.remove(), 300); }, 3500);
-        }
-        window.showToast = showToast;
-
-        // Close modals on backdrop click
-        document.querySelectorAll('.modal').forEach(m => {
-            m.addEventListener('click', e => { if (e.target === m) m.style.display = 'none'; });
-        });
-        document.querySelectorAll('.modal-close').forEach(b => {
-            b.addEventListener('click', () => { b.closest('.modal').style.display = 'none'; });
-        });
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+    <script src="config.js?v=5"></script>
+    <script src="auth.js?v=5"></script>
+    <script src="store.js?v=5"></script>
+    <script src="scripts.js?v=5"></script>
+    <script src="admin.js?v=5"></script>
+    <script src="components.js?v=5"></script>
 </body>
 </html>

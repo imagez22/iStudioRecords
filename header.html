@@ -1,26 +1,25 @@
 <header class="header" id="header">
-    <nav class="nav-container">
+    <nav class="nav-container" aria-label="Main">
         <a href="index.html" class="logo">I Studio Records</a>
-        <ul class="nav-menu">
-            <li><a href="index.html#studios">Studios</a></li>
-            <li><a href="index.html#instruments">Instruments</a></li>
+        <ul class="nav-menu" id="nav-menu">
             <li><a href="index.html#services">Services</a></li>
+            <li><a href="index.html#studios">Studios</a></li>
+            <li><a href="index.html#instruments">Gear</a></li>
             <li><a href="index.html#reviews">Reviews</a></li>
             <li><a href="index.html#faq">FAQ</a></li>
+            <li><a href="index.html#contact">Contact</a></li>
         </ul>
         <div class="nav-buttons">
             <div id="guest-menu">
-                <a href="index.html#contact" class="btn btn-ghost" style="font-size:0.85rem;padding:8px 14px;">Contact</a>
-                <a href="#" class="btn btn-login" id="login-signup-btn"><i class="fas fa-user"></i> Login</a>
-                <button class="btn btn-theme-toggle" id="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button>
+                <a href="#" class="btn btn-login" id="login-signup-btn"><i class="fas fa-user"></i> <span>Sign in</span></a>
             </div>
             <div id="user-menu">
                 <span id="user-greeting"></span>
-                <a href="user-dashboard.html" id="my-requests-btn">Dashboard</a>
-                <a href="user-dashboard.html" id="my-feedbacks-btn">My Bookings</a>
-                <a href="#" id="logout-btn">Logout</a>
-                <button class="btn btn-theme-toggle" id="theme-toggle-user" aria-label="Toggle theme"><i class="fas fa-sun"></i></button>
+                <a href="user-dashboard.html" id="dashboard-link"><i class="fas fa-th-large"></i> Dashboard</a>
+                <a href="#" id="logout-btn" aria-label="Log out"><i class="fas fa-sign-out-alt"></i><span class="logout-label"> Logout</span></a>
             </div>
+            <button type="button" class="btn btn-theme-toggle" id="theme-toggle" aria-label="Toggle theme"><i class="fas fa-sun"></i></button>
+            <button type="button" class="btn btn-nav-toggle" id="nav-toggle" aria-label="Open menu" aria-controls="nav-menu" aria-expanded="false"><i class="fas fa-bars"></i></button>
         </div>
     </nav>
 </header>

@@ -38,7 +38,7 @@
 - 📱 **Responsive Design** - Works perfectly on desktop, tablet, and mobile
 - 🌙 **Dark/Light Theme** - Theme switcher for user preference
 - ⚡ **Fast & Lightweight** - Optimized for speed and performance
-- 🔒 **Secure Authentication** - Client-side validation and localStorage persistence
+- 🔒 **Secure Backend** - Supabase Auth + Postgres with row-level security; payments verified server-side
 
 ---
 
@@ -109,6 +109,9 @@ npm start
 
 ## 🎮 Running the Project
 
+> **First time?** Connect the backend by following [SUPABASE_SETUP.md](SUPABASE_SETUP.md).
+> Until then the site shows a "not connected" banner.
+
 ### Start Development Server
 ```bash
 npm start
@@ -124,7 +127,8 @@ Ctrl + C
 
 ### Run Tests
 ```bash
-npm test
+npm test            # unit + database (real migration in PGlite) + Edge Function tests
+npm run test:e2e    # browser tests in Chrome against a local Supabase stand-in
 ```
 
 ### Deploy to GitHub Pages
@@ -141,12 +145,20 @@ iStudioRecords/
 ├── index.html              # Home page
 ├── user-dashboard.html     # User dashboard
 ├── admin.html              # Admin panel
-├── auth.js                 # Authentication functions
+├── config.js               # Supabase URL + anon key, Paystack public key
+├── auth.js                 # Sign-in / sign-up via Supabase Auth
+├── store.js                # Data layer (Supabase queries, availability, pricing)
 ├── modalLogic.js           # Modal & form handling
-├── scripts.js              # Main app logic
+├── scripts.js              # Main app logic + booking flow
+├── admin.js                # Admin panel
 ├── styles.css              # Styling
-├── components.js           # Reusable components
-├── db.json                 # Database (studios, users, bookings)
+├── components.js           # Header/footer loader
+├── supabase/
+│   ├── migrations/         # Database schema + security rules
+│   ├── seed.sql            # Starting studios, instruments, testimonials
+│   └── functions/book/     # Edge Function: verifies Paystack payment, saves booking
+├── tests/                  # Unit, database, function and browser tests
+├── SUPABASE_SETUP.md       # How to connect your Supabase project
 ├── package.json            # Project dependencies
 ├── README.md               # This file
 └── images/                 # Image assets
@@ -163,12 +175,12 @@ iStudioRecords/
 - **HTML5** - Structure
 - **CSS3** - Styling & animations
 - **JavaScript (ES6+)** - Functionality
-- **Bootstrap 5** - Responsive framework
+- **Custom CSS design system** - Dark/light theme tokens, no framework
 
 ### Backend/Data
-- **JSON** - Static data storage
-- **localStorage** - Client-side data persistence
-- **Python 3** - Development server
+- **Supabase** - Postgres database, Auth and Edge Functions (see [SUPABASE_SETUP.md](SUPABASE_SETUP.md))
+- **Row-level security** - Database rules decide who can read and change what
+- **Python 3** - Local development server
 
 ### Payment
 - **Paystack API** - Payment processing
@@ -182,21 +194,22 @@ iStudioRecords/
 
 ## 🔐 Authentication System
 
-### Admin Account (Default)
-```
-Email: admin@example.com
-Password: admin123
+Accounts are handled by **Supabase Auth** (hashed passwords, email confirmation, password reset).
+
+### Admin Account
+There is no default admin. Create an account on the site, then in the Supabase SQL Editor run:
+```sql
+update public.profiles set is_admin = true where email = 'you@example.com';
 ```
 
 ### User Registration
-- Any visitor can create a non-admin account
-- Minimum password: 8 characters
-- Email must be unique
-- All new accounts are non-admin by default
+- Any visitor can create a client account (minimum password: 8 characters)
+- New accounts confirm their email before signing in
+- Nobody can make themselves admin — the database blocks it
 
 ### Login Features
-- Session persists across page refreshes
-- localStorage stores user data
+- Session persists across page refreshes and refreshes itself automatically
+- "Forgot your password?" sends a reset link
 - Automatic redirect based on user role
 
 ---
@@ -248,10 +261,13 @@ Password: admin123
 
 ## 🌐 Production Deployment
 
-### Netlify
-- Site: https://istudiorecordx.netlify.app/
-- Custom Domain: istudiorecords.space
-- Auto-deploys on git push
+### Netlify (live)
+- Site: https://istudiorecords.space (also https://istudiorecordx.netlify.app)
+- Auto-deploys on every push to `main` of `imagez22/iStudioRecords`
+- `netlify.toml` sets the security and cache headers and blocks `node_modules/`,
+  `tests/`, `supabase/`, `package.json` and the docs from being served
+- Both addresses must be in Supabase (Auth → URL Configuration) and in the
+  `ALLOWED_ORIGIN` secret — see [SUPABASE_SETUP.md](SUPABASE_SETUP.md)
 
 ### GitHub Pages
 - Command: `npm run deploy`

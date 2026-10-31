@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-color-scheme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230e0e11'/%3E%3Ccircle cx='32' cy='32' r='12' fill='%23e6a817'/%3E%3C/svg%3E">
     <title>I Studio Records — Professional Recording Studios in Ghana</title>
     <meta name="description" content="I Studio Records — Professional recording studios, mixing & mastering, live band rooms, and beat production in Keta, Volta Region, Ghana. Book online with Paystack.">
     <meta name="keywords" content="music studio Ghana, recording studio Keta, Volta Region studio, mixing mastering Ghana, I Studio Records">
@@ -24,30 +25,24 @@
     <meta name="twitter:description" content="Book world-class recording studios online. Secure payments via Paystack.">
     <meta name="twitter:image" content="https://imagez22.github.io/iStudioRecords/images/HeroBanner.jpg">
 
-    <!-- Theme colour (browser chrome) -->
-    <meta name="theme-color" content="#111111">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=3">
+    <meta name="theme-color" content="#0b0b0d">
+    <script>try{document.documentElement.setAttribute('data-color-scheme',localStorage.getItem('theme')||'dark')}catch(e){}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <!-- Google Fonts: Inter + Space Grotesk -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <!-- Paystack -->
-    <script src="https://js.paystack.co/v1/inline.js"></script>
+    <link rel="stylesheet" href="styles.css?v=5">
 
+    <!-- Paystack checkout (keys live in config.js; the secret key is only on the server) -->
+    <script src="https://js.paystack.co/v1/inline.js" defer></script>
 </head>
-<body>
-    <!-- Header Placeholder -->
-    <div id="header-placeholder">
-    
-    </div>
+<body class="has-hero">
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div id="header-placeholder"></div>
+    <div id="toast-container" aria-live="polite"></div>
 
-    <!-- Hero Section -->
-    <!-- Toast container -->
-    <div id="toast-container"></div>
-
+    <main id="main">
+    <!-- Hero -->
     <section class="hero">
         <div class="hero-bg"></div>
         <div class="hero-overlay"></div>
@@ -56,8 +51,8 @@
             <h1>Where <span class="accent">Artists</span><br>Come to Life</h1>
             <p class="hero-subtitle">Professional recording studios, world-class mixing &amp; mastering, and creative spaces built for serious musicians.</p>
             <div class="hero-actions">
-                <a href="#studios" class="btn hero-btn" id="hero-book-btn"><i class="fas fa-microphone"></i> Book a Studio</a>
-                <a href="#services" class="hero-btn-secondary"><i class="fas fa-play"></i> Explore Services</a>
+                <a href="#studios" class="btn hero-btn" id="hero-book-btn"><i class="fas fa-microphone"></i> Book a Session</a>
+                <a href="#how-it-works" class="hero-btn-secondary"><i class="fas fa-play"></i> How it Works</a>
             </div>
         </div>
         <div class="hero-stats">
@@ -66,7 +61,7 @@
                 <div class="hero-stat-label">Artists Served</div>
             </div>
             <div class="hero-stat">
-                <div class="hero-stat-value">5</div>
+                <div class="hero-stat-value" id="hero-stat-studios">5</div>
                 <div class="hero-stat-label">Studio Rooms</div>
             </div>
             <div class="hero-stat">
@@ -74,13 +69,13 @@
                 <div class="hero-stat-label">Years Active</div>
             </div>
         </div>
-        <div class="scroll-indicator">
+        <div class="scroll-indicator" aria-hidden="true">
             <div class="scroll-indicator-line"></div>
             <span>Scroll</span>
         </div>
     </section>
 
-    <!-- Services Section -->
+    <!-- Services -->
     <section id="services" class="section services-section">
         <div class="container">
             <div class="section-header">
@@ -91,7 +86,7 @@
             <div class="services-grid">
                 <div class="service-card reveal">
                     <div class="service-icon"><i class="fas fa-microphone-alt"></i></div>
-                    <h3>Recording Studio</h3>
+                    <h3>Recording Sessions</h3>
                     <p>Acoustically treated rooms with top-tier microphones, preamps, and monitoring for pristine recordings.</p>
                 </div>
                 <div class="service-card reveal reveal-delay-1">
@@ -104,26 +99,54 @@
                     <h3>Live Band Rooms</h3>
                     <p>Spacious jam rooms wired for multi-channel live recording — perfect for bands and ensembles.</p>
                 </div>
-                <div class="service-card reveal reveal-delay-3">
+                <div class="service-card reveal">
                     <div class="service-icon"><i class="fas fa-headphones-alt"></i></div>
                     <h3>Beat Production</h3>
                     <p>Work with our in-house producers and access our library of premium samples, loops and plugins.</p>
                 </div>
-                <div class="service-card reveal">
-                    <div class="service-icon"><i class="fas fa-film"></i></div>
+                <div class="service-card reveal reveal-delay-1">
+                    <div class="service-icon"><i class="fas fa-podcast"></i></div>
                     <h3>Podcast &amp; Voice-Over</h3>
                     <p>Broadcast-quality booths for podcasting, audiobooks, radio ads, and voice-over sessions.</p>
                 </div>
-                <div class="service-card reveal reveal-delay-1">
-                    <div class="service-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <h3>Music Lessons</h3>
-                    <p>One-on-one and group lessons with certified instructors across guitar, piano, vocals and more.</p>
+                <div class="service-card reveal reveal-delay-2">
+                    <div class="service-icon"><i class="fas fa-user-cog"></i></div>
+                    <h3>Session Engineers</h3>
+                    <p>Add an in-house engineer to any booking to run the desk while you focus on the performance.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Studios Carousel Section -->
+    <!-- How it works -->
+    <section id="how-it-works" class="section how-section">
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Booking</div>
+                <h2 class="section-title">Book a Session in Minutes</h2>
+                <p class="section-subtitle">Live availability, transparent hourly pricing, secure payment.</p>
+            </div>
+            <ol class="steps-grid">
+                <li class="step-card reveal">
+                    <span class="step-num">1</span>
+                    <h3>Pick a room</h3>
+                    <p>Browse our studios and choose the space and session type that fits your project.</p>
+                </li>
+                <li class="step-card reveal reveal-delay-1">
+                    <span class="step-num">2</span>
+                    <h3>Choose your time</h3>
+                    <p>Select a date, a 1–4 hour session and an open slot. Add an engineer if you need one.</p>
+                </li>
+                <li class="step-card reveal reveal-delay-2">
+                    <span class="step-num">3</span>
+                    <h3>Pay &amp; record</h3>
+                    <p>Pay securely with Paystack. We confirm your session and you're ready to record.</p>
+                </li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- Studios -->
     <section id="studios" class="section bg-surface">
         <div class="container">
             <div class="section-header">
@@ -132,57 +155,57 @@
                 <p class="section-subtitle">Professionally equipped spaces for any genre, any project, any budget.</p>
             </div>
             <div class="carousel-container">
-                <button class="carousel-nav prev" onclick="moveCarousel('studios', -1)" aria-label="Previous studios">‹</button>
+                <button type="button" class="carousel-nav prev" onclick="moveCarousel('studios', -1)" aria-label="Previous studios"><i class="fas fa-chevron-left"></i></button>
                 <div class="carousel-wrapper">
                     <div class="carousel-track" id="studios-track">
+                        <div class="skeleton-card"></div><div class="skeleton-card"></div><div class="skeleton-card"></div>
                     </div>
                 </div>
-                <button class="carousel-nav next" onclick="moveCarousel('studios', 1)" aria-label="Next studios">›</button>
+                <button type="button" class="carousel-nav next" onclick="moveCarousel('studios', 1)" aria-label="Next studios"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
     </section>
 
-    <!-- Instruments Carousel Section -->
+    <!-- Instruments -->
     <section id="instruments" class="section">
         <div class="container">
             <div class="section-header">
                 <div class="section-label">Gear &amp; Instruments</div>
                 <h2 class="section-title">World-Class Equipment</h2>
-                <p class="section-subtitle">Explore our extensive collection of instruments and studio gear available to all clients.</p>
+                <p class="section-subtitle">Explore our collection of instruments and studio gear available to all clients.</p>
             </div>
-            
             <div class="carousel-container">
-                <button class="carousel-nav prev" onclick="moveCarousel('instruments', -1)" aria-label="Previous instruments">‹</button>
+                <button type="button" class="carousel-nav prev" onclick="moveCarousel('instruments', -1)" aria-label="Previous instruments"><i class="fas fa-chevron-left"></i></button>
                 <div class="carousel-wrapper">
-                    <div class="carousel-track" id="instruments-track">
-                    </div>
+                    <div class="carousel-track" id="instruments-track"></div>
                 </div>
-                <button class="carousel-nav next" onclick="moveCarousel('instruments', 1)" aria-label="Next instruments">›</button>
+                <button type="button" class="carousel-nav next" onclick="moveCarousel('instruments', 1)" aria-label="Next instruments"><i class="fas fa-chevron-right"></i></button>
             </div>
         </div>
     </section>
 
-    <!-- Reviews Section -->
+    <!-- Reviews -->
     <section id="reviews" class="section reviews-section">
-    <div class="container">
-        <div class="section-header">
-            <div class="section-label">Testimonials</div>
-            <h2 class="section-title">What Our Clients Say</h2>
-            <p class="section-subtitle">Hear from the artists and producers who've recorded with us.</p>
-        </div>
-        
-        <div class="carousel-container">
-            <button class="carousel-nav prev" onclick="moveCarousel('reviews', -1)" aria-label="Previous review">‹</button>
-            <div class="carousel-wrapper">
-                <div class="carousel-track" id="reviews-track">
-                </div>
+        <div class="container">
+            <div class="section-header">
+                <div class="section-label">Testimonials</div>
+                <h2 class="section-title">What Our Clients Say</h2>
+                <p class="section-subtitle">Hear from the artists and producers who've recorded with us.</p>
             </div>
-            <button class="carousel-nav next" onclick="moveCarousel('reviews', 1)" aria-label="Next review">›</button>
+            <div class="carousel-container">
+                <button type="button" class="carousel-nav prev" onclick="moveCarousel('reviews', -1)" aria-label="Previous review"><i class="fas fa-chevron-left"></i></button>
+                <div class="carousel-wrapper">
+                    <div class="carousel-track" id="reviews-track"></div>
+                </div>
+                <button type="button" class="carousel-nav next" onclick="moveCarousel('reviews', 1)" aria-label="Next review"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="section-cta">
+                <button type="button" class="btn btn-outline" data-action="leave-review"><i class="fas fa-star"></i> Write a Review</button>
+            </div>
         </div>
-    </div>
-</section>
+    </section>
 
-    <!-- FAQ Section -->
+    <!-- FAQ -->
     <section id="faq" class="section faq-section">
         <div class="container">
             <div class="section-header">
@@ -190,79 +213,74 @@
                 <h2 class="section-title">Frequently Asked Questions</h2>
             </div>
             <div class="faq-list">
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>Is the studio open on weekends?</span>
-                    <span class="faq-toggle">+</span>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+                        <span>When is the studio open?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We're open Monday to Saturday, 10AM – 9PM. Sessions can start on the hour from 10:00, and must finish by 21:00.</p>
+                    </div>
                 </div>
-                <div class="faq-answer">
-                    <p>Yes, we're open Monday - Saturday a week, from 10AM to 9PM</p>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+                        <span>How do I book a studio?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Create a free account, pick a studio and click <strong>Book</strong>. Choose a session type, duration, date and time, then pay securely with Paystack. You can track every booking from your dashboard.</p>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>How do I book a studio?</span>
-                    <span class="faq-toggle">+</span>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+                        <span>What are your rates?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Each studio has an hourly rate shown on its card. An in-house session engineer can be added for GH₵100 per hour. Your total is shown before you pay.</p>
+                    </div>
                 </div>
-                <div class="faq-answer">
-                    <p>Click the 'Book Now' button to book directly through our dashboard</p>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+                        <span>Can I cancel a booking?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes — you can cancel a pending or approved upcoming booking from your dashboard. The slot is released immediately. Contact us about refunds.</p>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>Can I use instruments without booking?</span>
-                    <span class="faq-toggle">+</span>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+                        <span>Can I use instruments without booking them?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes. All gear listed on the site is available during your session — just let us know what you need in the booking notes.</p>
+                    </div>
                 </div>
-                <div class="faq-answer">
-                    <p>Yes, we require you choose the instruments physically at the time of appointment</p>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+                        <span>Can I bring my own engineer or producer?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely. You're welcome to bring your own engineer or producer — you only pay for the room.</p>
+                    </div>
                 </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>What are your rates for studio booking?</span>
-                    <span class="faq-toggle">+</span>
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+                        <span>What payment methods do you accept?</span>
+                        <span class="faq-toggle">+</span>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We accept card, bank transfer and mobile money via Paystack. Payment is processed securely when you book.</p>
+                    </div>
                 </div>
-                <div class="faq-answer">
-                    <p>Our rates vary by studio type and duration. Please contact us for detailed pricing information.</p>
-                </div>
-            </div>
-
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>Do you provide mixing and mastering services?</span>
-                    <span class="faq-toggle">+</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Yes, we offer professional mixing and mastering services with experienced engineers.</p>
-                </div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>Can I bring my own engineer or producer?</span>
-                    <span class="faq-toggle">+</span>
-                </div>
-                <div class="faq-answer">
-                    <p>Absolutely. You're welcome to bring your own engineer or producer. We charge only for the room, not the engineer.</p>
-                </div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFAQ(this)">
-                    <span>What payment methods do you accept?</span>
-                    <span class="faq-toggle">+</span>
-                </div>
-                <div class="faq-answer">
-                    <p>We accept all major payment methods via Paystack — card, bank transfer, and USSD. Payment is processed securely at booking.</p>
-                </div>
-            </div>
             </div>
         </div>
     </section>
 
-    <!-- Contact Section -->
+    <!-- Contact -->
     <section id="contact" class="section contact-section">
         <div class="container">
             <div class="section-header">
@@ -272,21 +290,21 @@
             </div>
             <div class="contact-content">
                 <div class="contact-visual">
-                    <img src="images/contact-icon.svg" alt="Contact">
+                    <img src="images/contact-icon.svg" alt="" loading="lazy">
                 </div>
                 <div class="contact-info">
                     <div class="contact-item">
                         <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
                         <div class="contact-item-text"><strong>Address</strong><span>Keta, Volta Region, Ghana</span></div>
                     </div>
-                    <div class="contact-item">
+                    <a class="contact-item" href="mailto:aklijoshuaericy@gmail.com">
                         <div class="contact-icon"><i class="fas fa-envelope"></i></div>
                         <div class="contact-item-text"><strong>Email</strong><span>aklijoshuaericy@gmail.com</span></div>
-                    </div>
-                    <div class="contact-item">
+                    </a>
+                    <a class="contact-item" href="tel:+233501943457">
                         <div class="contact-icon"><i class="fas fa-phone"></i></div>
                         <div class="contact-item-text"><strong>Phone</strong><span>+233 501 943 457</span></div>
-                    </div>
+                    </a>
                     <div class="contact-item">
                         <div class="contact-icon"><i class="fas fa-clock"></i></div>
                         <div class="contact-item-text"><strong>Hours</strong><span>Mon – Sat, 10AM – 9PM</span></div>
@@ -295,295 +313,298 @@
             </div>
         </div>
     </section>
+    </main>
 
-
-    <!-- Footer Placeholder -->
     <div id="footer-placeholder"></div>
 
     <!-- Studio Info Modal -->
-    <div id="studioModal" class="modal">
-        <div class="modal-content scrollable" style="padding:0; max-width:560px;">
-            <button class="modal-close">&times;</button>
-            <img id="modal-studio-image" src="" alt="" style="width:100%;height:220px;object-fit:cover;border-radius:var(--radius-xl) var(--radius-xl) 0 0;">
-            <div style="padding:var(--space-28);">
-                <div class="section-label" style="margin-bottom:var(--space-12);">Studio</div>
-                <h2 id="modal-studio-title" style="margin-bottom:8px;"></h2>
-                <p style="font-size:var(--font-size-sm);color:var(--color-text-muted);margin-bottom:var(--space-16);"><i class="fas fa-map-marker-alt"></i> <span id="modal-studio-location"></span></p>
-                <p id="modal-studio-long-description" style="margin-bottom:var(--space-24);"></p>
-                <div style="display:flex;gap:var(--space-12);">
-                    <button id="modal-studio-book-btn" class="btn btn-primary" style="flex:1;"><i class="fas fa-calendar-check"></i> Book Now</button>
-                    <button id="modal-studio-feedback-btn" class="btn btn-outline" style="flex:1;"><i class="fas fa-star"></i> Leave Review</button>
+    <div id="studioModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-studio-title" aria-hidden="true">
+        <div class="modal-content scrollable modal-flush" style="max-width:560px;">
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+            <img id="modal-studio-image" class="modal-hero-img" src="" alt="">
+            <div class="modal-body">
+                <div class="section-label">Studio</div>
+                <h2 id="modal-studio-title"></h2>
+                <p class="modal-meta"><i class="fas fa-map-marker-alt"></i> <span id="modal-studio-location"></span>
+                    <span class="meta-sep">&middot;</span> <i class="fas fa-tag"></i> <span id="modal-studio-rate"></span></p>
+                <p id="modal-studio-long-description"></p>
+                <div class="modal-actions">
+                    <button type="button" id="modal-studio-book-btn" class="btn btn-primary"><i class="fas fa-calendar-check"></i> Book Now</button>
+                    <button type="button" id="modal-studio-feedback-btn" class="btn btn-outline"><i class="fas fa-star"></i> Leave Review</button>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Instrument Info Modal -->
-    <div id="instrumentModal" class="modal">
+    <div id="instrumentModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-instr-title" aria-hidden="true">
         <div class="modal-content scrollable">
-            <button class="modal-close">&times;</button>
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
             <img id="modal-instr-image" src="" alt="" class="modal-image">
-            <div class="section-label" style="margin-bottom:var(--space-12);">Instrument</div>
-            <h2 id="modal-instr-title" style="margin-bottom:var(--space-16);"></h2>
-            <p id="modal-instr-long-description" style="margin-bottom:var(--space-20);"></p>
-            <div style="background:var(--color-surface-raised);border:1px solid var(--color-border);border-radius:var(--radius-lg);padding:var(--space-20);">
-                <p style="margin-bottom:var(--space-8);"><i class="fas fa-info-circle text-gold"></i> <strong>Fun Fact:</strong> <span id="modal-instr-fun-fact"></span></p>
-                <p style="margin-bottom:0;font-style:italic;color:var(--color-text-muted);font-size:var(--font-size-sm);"><span id="modal-instr-joke"></span></p>
+            <div class="section-label">Instrument</div>
+            <h2 id="modal-instr-title"></h2>
+            <p id="modal-instr-long-description"></p>
+            <div class="info-box">
+                <p><i class="fas fa-lightbulb text-gold"></i> <strong>Fun Fact:</strong> <span id="modal-instr-fun-fact"></span></p>
+                <p class="info-box-joke"><span id="modal-instr-joke"></span></p>
             </div>
         </div>
     </div>
 
-    <!-- Advanced Booking Modal with Paystack -->
-    <div id="advancedBookingModal" class="modal">
-        <div class="modal-content" style="padding:0;max-width:580px;">
+    <!-- Booking Modal (Paystack) -->
+    <div id="advancedBookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="adv-booking-title" aria-hidden="true">
+        <div class="modal-content modal-flush" style="max-width:600px;">
             <div class="booking-modal-header">
                 <img id="adv-booking-img" src="" alt="" style="display:none;">
-                <div>
+                <div class="booking-modal-heading">
                     <div class="booking-step-label">New Booking</div>
                     <h2 id="adv-booking-title"></h2>
-                    <p style="font-size:var(--font-size-xs);color:var(--color-text-muted);"><i class="fas fa-map-marker-alt"></i> <span id="adv-booking-location"></span></p>
+                    <p class="modal-meta"><i class="fas fa-map-marker-alt"></i> <span id="adv-booking-location"></span>
+                        <span class="meta-sep">&middot;</span> <span id="adv-booking-rate"></span></p>
                 </div>
-                <button class="modal-close" style="position:static;margin-left:auto;flex-shrink:0;">&times;</button>
+                <button type="button" class="modal-close modal-close-static" aria-label="Close">&times;</button>
             </div>
             <div class="booking-modal-body">
                 <div class="booking-progress">
-                    <div class="progress-step done" id="prog-1"></div>
-                    <div class="progress-step" id="prog-2"></div>
-                    <div class="progress-step" id="prog-3"></div>
+                    <div class="progress-step active" id="prog-1"><span>Session</span></div>
+                    <div class="progress-step" id="prog-2"><span>Details</span></div>
+                    <div class="progress-step" id="prog-3"><span>Payment</span></div>
                 </div>
-                <!-- Step 1: Date & Time -->
+
+                <!-- Step 1: Session -->
                 <div class="booking-step active" id="booking-step-1">
-                    <div class="booking-step-label">Step 1 of 3 &mdash; Choose Date &amp; Time</div>
-                    <div class="form-group">
-                        <label for="adv-booking-date">Select a Date</label>
-                        <input type="date" id="adv-booking-date" class="form-control">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="booking-session-type">Session type</label>
+                            <select id="booking-session-type" class="form-control"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="adv-booking-date">Date</label>
+                            <input type="date" id="adv-booking-date" class="form-control">
+                        </div>
                     </div>
-                    <label style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-text-secondary);margin-bottom:8px;display:block;">Available Time Slots</label>
+                    <div class="form-group">
+                        <span class="form-label">Duration</span>
+                        <div class="duration-chips" role="group" aria-label="Session duration">
+                            <button type="button" class="duration-chip selected" data-hours="1">1 hr</button>
+                            <button type="button" class="duration-chip" data-hours="2">2 hrs</button>
+                            <button type="button" class="duration-chip" data-hours="3">3 hrs</button>
+                            <button type="button" class="duration-chip" data-hours="4">4 hrs</button>
+                        </div>
+                    </div>
+                    <span class="form-label">Start time</span>
                     <div id="time-slots-container" class="time-slots-grid"></div>
-                    <button class="btn btn-primary" style="width:100%;margin-top:var(--space-24);padding:14px;" id="step1-next" onclick="bookingNextStep(2)" disabled>
+                    <label class="check-row" for="booking-engineer">
+                        <input type="checkbox" id="booking-engineer">
+                        <span><strong>Add a session engineer</strong><small>+GH₵100 per hour</small></span>
+                    </label>
+                    <div class="price-live" id="booking-price-live"></div>
+                    <button type="button" class="btn btn-primary btn-block" id="step1-next" data-booking-step="2" disabled>
                         Continue <i class="fas fa-arrow-right"></i>
                     </button>
                 </div>
-                <!-- Step 2: Your Details -->
+
+                <!-- Step 2: Details -->
                 <div class="booking-step" id="booking-step-2">
-                    <div class="booking-step-label">Step 2 of 3 &mdash; Your Details</div>
                     <div class="form-group">
-                        <label for="booking-name">Full Name</label>
-                        <input type="text" id="booking-name" class="form-control" placeholder="Your name">
+                        <label for="booking-name">Full name</label>
+                        <input type="text" id="booking-name" class="form-control" placeholder="Your name" autocomplete="name" maxlength="60">
                     </div>
                     <div class="form-group">
-                        <label for="booking-email">Email Address</label>
-                        <input type="email" id="booking-email" class="form-control" placeholder="your@email.com">
+                        <label for="booking-email">Email (from your account)</label>
+                        <input type="email" id="booking-email" class="form-control" readonly>
                     </div>
                     <div class="form-group">
-                        <label for="booking-phone">Phone Number</label>
-                        <input type="tel" id="booking-phone" class="form-control" placeholder="+234 800 000 0000">
+                        <label for="booking-phone">Phone number</label>
+                        <input type="tel" id="booking-phone" class="form-control" placeholder="+233 50 000 0000" autocomplete="tel">
                     </div>
                     <div class="form-group">
-                        <label for="booking-notes">Additional Notes (optional)</label>
-                        <textarea id="booking-notes" class="form-control" rows="2" placeholder="Any special requirements..."></textarea>
+                        <label for="booking-notes">Notes for the studio (optional)</label>
+                        <textarea id="booking-notes" class="form-control" rows="3" maxlength="500" placeholder="Gear you need, number of musicians, reference tracks..."></textarea>
                     </div>
-                    <div style="display:flex;gap:var(--space-12);">
-                        <button class="btn btn-ghost" style="flex:1;" onclick="bookingNextStep(1)"><i class="fas fa-arrow-left"></i> Back</button>
-                        <button class="btn btn-primary" style="flex:2;padding:12px;" onclick="bookingNextStep(3)">Review &amp; Pay <i class="fas fa-arrow-right"></i></button>
+                    <div class="btn-row">
+                        <button type="button" class="btn btn-ghost" data-booking-step="1"><i class="fas fa-arrow-left"></i> Back</button>
+                        <button type="button" class="btn btn-primary btn-grow" data-booking-step="3">Review &amp; Pay <i class="fas fa-arrow-right"></i></button>
                     </div>
                 </div>
+
                 <!-- Step 3: Payment -->
                 <div class="booking-step" id="booking-step-3">
-                    <div class="booking-step-label">Step 3 of 3 &mdash; Review &amp; Payment</div>
                     <div class="payment-summary">
-                        <div class="payment-summary-row"><span>Studio</span><span class="price" id="pay-studio-name"></span></div>
+                        <div class="payment-summary-row"><span>Studio</span><span id="pay-studio-name"></span></div>
+                        <div class="payment-summary-row"><span>Session</span><span id="pay-session"></span></div>
                         <div class="payment-summary-row"><span>Date</span><span id="pay-date"></span></div>
                         <div class="payment-summary-row"><span>Time</span><span id="pay-time"></span></div>
-                        <div class="payment-summary-row"><span>Duration</span><span>1 hour</span></div>
-                        <div class="payment-summary-row total"><span>Total</span><span class="price" id="pay-total">&#x20A6;15,000</span></div>
+                        <div class="payment-summary-row"><span>Studio time (<span id="pay-duration"></span>)</span><span id="pay-studio-cost"></span></div>
+                        <div class="payment-summary-row" id="pay-engineer-row"><span>Session engineer</span><span id="pay-engineer-cost"></span></div>
+                        <div class="payment-summary-row total"><span>Total</span><span class="price" id="pay-total"></span></div>
                     </div>
-                    <button class="paystack-btn" onclick="initiatePaystackPayment()">
-                        <i class="fas fa-lock"></i> Pay Securely with Paystack
+                    <button type="button" class="paystack-btn" id="pay-btn">
+                        <i class="fas fa-lock"></i> Pay <span id="pay-amount-btn"></span> with Paystack
                     </button>
-                    <div class="secure-badge">
-                        <i class="fas fa-shield-alt"></i>
-                        256-bit SSL &bull; Secured with Encryption
-                    </div>
-                    <button class="btn btn-ghost" style="width:100%;margin-top:var(--space-12);" onclick="bookingNextStep(2)"><i class="fas fa-arrow-left"></i> Back</button>
+                    <div class="secure-badge"><i class="fas fa-shield-alt"></i> Payments are processed securely by Paystack</div>
+                    <button type="button" class="btn btn-ghost btn-block" data-booking-step="2"><i class="fas fa-arrow-left"></i> Back</button>
                 </div>
+
+                <!-- Step 4: Confirmed -->
+                <div class="booking-step" id="booking-step-4">
+                    <div class="confirm-hero">
+                        <div class="confirm-icon"><i class="fas fa-check"></i></div>
+                        <h3>Booking request received!</h3>
+                        <p>We'll review and approve your session shortly. Reference: <strong id="confirm-ref"></strong></p>
+                    </div>
+                    <div class="payment-summary" id="confirm-details"></div>
+                    <div class="btn-row">
+                        <button type="button" class="btn btn-ghost" id="booking-ics-btn"><i class="fas fa-calendar-plus"></i> Add to calendar</button>
+                        <a href="user-dashboard.html" class="btn btn-primary btn-grow"><i class="fas fa-th-large"></i> View my bookings</a>
+                    </div>
+                </div>
+                <p id="booking-error" class="error" role="alert"></p>
             </div>
         </div>
     </div>
 
-    <!-- Legacy bookingModal (backward compat) -->
-    <div id="bookingModal" style="display:none;"></div>
-
-    <!-- Login/Signup Modal -->
-    <div id="authModal" class="modal">
+    <!-- Login / Signup Modal -->
+    <div id="authModal" class="modal" role="dialog" aria-modal="true" aria-label="Sign in or create an account" aria-hidden="true">
         <div class="modal-content modal-grid">
             <div class="modal-form-section">
-                <button class="modal-close">&times;</button>
-                <div id="auth-forms">
-                    <div id="loginForm">
-                        <div class="section-label" style="margin-bottom:var(--space-16);">Welcome Back</div>
-                        <h2 style="margin-bottom:6px;">Sign In</h2>
-                        <p class="form-subtitle">Enter your credentials to access your dashboard.</p>
+                <button type="button" class="modal-close" aria-label="Close">&times;</button>
+                <div id="loginForm">
+                    <div class="section-label">Welcome Back</div>
+                    <h2>Sign In</h2>
+                    <p class="form-subtitle">Enter your credentials to access your dashboard.</p>
+                    <form id="login-form" novalidate>
                         <div class="form-group">
                             <label for="login-email">Email</label>
-                            <input type="email" id="login-email" placeholder="you@example.com" required>
+                            <input type="email" id="login-email" placeholder="you@example.com" autocomplete="email" required>
                         </div>
                         <div class="form-group">
                             <label for="login-password">Password</label>
-                            <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required>
+                            <input type="password" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" autocomplete="current-password" required>
                         </div>
-                        <button id="login-btn" class="btn btn-primary" style="width:100%;padding:14px;" onclick="handleLoginSubmit(event)">
+                        <button id="login-btn" type="submit" class="btn btn-primary btn-block">
                             <i class="fas fa-sign-in-alt"></i> Sign In
                         </button>
-                        <p id="login-error" class="error" style="text-align:center;margin-top:12px;"></p>
-                        <p class="form-switcher">No account? <a href="#" id="showSignup">Create one</a></p>
-                    </div>
-                    <div id="signupForm" style="display:none;">
-                        <div class="section-label" style="margin-bottom:var(--space-16);">New Account</div>
-                        <h2 style="margin-bottom:6px;">Create Account</h2>
-                        <p class="form-subtitle">Join I Studio Records and start booking today.</p>
+                    </form>
+                    <p id="login-error" class="error form-error" role="alert"></p>
+                    <p id="login-info" class="info form-error" role="status"></p>
+                    <p class="form-switcher"><a href="#" id="forgot-password-link">Forgot your password?</a></p>
+                    <p class="form-switcher">No account? <a href="#" id="showSignup">Create one</a></p>
+                </div>
+                <div id="signupForm" style="display:none;">
+                    <div class="section-label">New Account</div>
+                    <h2>Create Account</h2>
+                    <p class="form-subtitle">Join I Studio Records and start booking today.</p>
+                    <form id="signup-form" novalidate>
                         <div class="form-group">
                             <label for="signup-name">Full Name</label>
-                            <input type="text" id="signup-name" placeholder="Your name" required>
+                            <input type="text" id="signup-name" placeholder="Your name" autocomplete="name" maxlength="60" required>
                         </div>
                         <div class="form-group">
                             <label for="signup-email">Email</label>
-                            <input type="email" id="signup-email" placeholder="you@example.com" required>
+                            <input type="email" id="signup-email" placeholder="you@example.com" autocomplete="email" required>
                         </div>
                         <div class="form-group">
                             <label for="signup-password">Password</label>
-                            <input type="password" id="signup-password" placeholder="Min. 8 characters" required>
+                            <input type="password" id="signup-password" placeholder="Min. 8 characters" autocomplete="new-password" required>
                         </div>
                         <div class="form-group">
                             <label for="signup-confirm">Confirm Password</label>
-                            <input type="password" id="signup-confirm" required>
+                            <input type="password" id="signup-confirm" autocomplete="new-password" required>
                         </div>
-                        <button id="signup-btn" class="btn btn-primary" style="width:100%;padding:14px;">
+                        <button id="signup-btn" type="submit" class="btn btn-primary btn-block">
                             <i class="fas fa-user-plus"></i> Create Account
                         </button>
-                        <p id="signup-error" class="error" style="text-align:center;margin-top:12px;"></p>
-                        <p class="form-switcher">Have an account? <a href="#" id="showLogin">Sign in</a></p>
+                    </form>
+                    <p id="signup-error" class="error form-error" role="alert"></p>
+                    <p class="form-switcher">Have an account? <a href="#" id="showLogin">Sign in</a></p>
+                </div>
+                <div id="confirmPanel" style="display:none;">
+                    <div class="confirm-hero">
+                        <div class="confirm-icon"><i class="fas fa-envelope-open-text"></i></div>
+                        <h3>Check your inbox</h3>
+                        <p>We sent a confirmation link to <strong id="confirm-email"></strong>. Click it to activate your account, then sign in.</p>
                     </div>
+                    <button type="button" class="btn btn-primary btn-block" id="confirm-back-btn"><i class="fas fa-sign-in-alt"></i> Back to sign in</button>
                 </div>
             </div>
             <div class="modal-image-section">
-                <img src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?q=80&w=800" alt="Studio" id="login-image">
-                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=800" alt="Music" id="signup-image" style="display:none;">
+                <img src="https://images.unsplash.com/photo-1598387993441-a364f854c3e1?q=80&w=800" alt="" id="login-image" loading="lazy">
+                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?q=80&w=800" alt="" id="signup-image" style="display:none;" loading="lazy">
             </div>
         </div>
     </div>
 
-    <!-- My Requests Modal -->
-    <div id="myRequestsModal" class="modal">
-        <div class="modal-content scrollable">
-            <button class="modal-close">&times;</button>
-            <div class="section-label" style="margin-bottom:var(--space-16);">My Account</div>
-            <h2 style="margin-bottom:var(--space-24);">My Booking Requests</h2>
-            <div id="requests-list"></div>
+    <!-- Set New Password Modal (opened from a reset email link) -->
+    <div id="resetPasswordModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="reset-title" aria-hidden="true">
+        <div class="modal-content">
+            <button type="button" class="modal-close" aria-label="Close">&times;</button>
+            <div class="section-label">Account</div>
+            <h2 id="reset-title">Choose a New Password</h2>
+            <form id="reset-password-form" novalidate>
+                <div class="form-group">
+                    <label for="reset-password">New password</label>
+                    <input type="password" id="reset-password" class="form-control" autocomplete="new-password" placeholder="Min. 8 characters" required>
+                </div>
+                <div class="form-group">
+                    <label for="reset-confirm">Confirm new password</label>
+                    <input type="password" id="reset-confirm" class="form-control" autocomplete="new-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-key"></i> Update Password</button>
+                <p id="reset-error" class="error form-error" role="alert"></p>
+            </form>
         </div>
     </div>
 
-    <!-- My Feedbacks Modal -->
-    <div id="myFeedbacksModal" class="modal">
-        <div class="modal-content scrollable">
-            <button class="modal-close">&times;</button>
-            <div class="section-label" style="margin-bottom:var(--space-16);">My Account</div>
-            <h2 style="margin-bottom:var(--space-24);">My Reviews</h2>
-            <div id="feedbacks-list"></div>
-        </div>
-    </div>
-
-    <!-- Feedback Form Modal -->
-    <div id="feedbackModal" class="modal">
+    <!-- Review Modal -->
+    <div id="feedbackModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="feedback-title" aria-hidden="true">
         <div class="modal-content modal-grid">
             <div class="modal-form-section">
-                <button class="modal-close">&times;</button>
-                <div class="section-label" style="margin-bottom:var(--space-16);">Feedback</div>
-                <h2 style="margin-bottom:6px;">Leave a Review</h2>
+                <button type="button" class="modal-close" aria-label="Close">&times;</button>
+                <div class="section-label">Feedback</div>
+                <h2 id="feedback-title">Leave a Review</h2>
                 <p class="form-subtitle">Your feedback helps us grow. Thank you!</p>
-                <div class="form-group">
-                    <label for="feedback-name">Name</label>
-                    <input type="text" id="feedback-name" class="form-control" placeholder="Your name">
-                </div>
-                <div class="form-group">
-                    <label for="feedback-email">Email</label>
-                    <input type="email" id="feedback-email" class="form-control" placeholder="your@email.com">
-                </div>
-                <div class="form-group">
-                    <label for="feedback-studio-select">Studio</label>
-                    <select id="feedback-studio-select" class="form-control"></select>
-                </div>
-                <label style="font-size:var(--font-size-sm);font-weight:600;color:var(--color-text-secondary);display:block;margin-bottom:8px;">Your Rating</label>
-                <div class="star-rating">
-                    <input type="radio" id="star5" name="rating" value="5"><label for="star5">&#9733;</label>
-                    <input type="radio" id="star4" name="rating" value="4"><label for="star4">&#9733;</label>
-                    <input type="radio" id="star3" name="rating" value="3"><label for="star3">&#9733;</label>
-                    <input type="radio" id="star2" name="rating" value="2"><label for="star2">&#9733;</label>
-                    <input type="radio" id="star1" name="rating" value="1"><label for="star1">&#9733;</label>
-                </div>
-                <div class="form-group">
-                    <label for="feedback-message">Your Review</label>
-                    <textarea id="feedback-message" class="form-control" rows="4" placeholder="Tell us about your experience..."></textarea>
-                </div>
-                <button id="submit-feedback-btn" class="btn btn-primary" style="width:100%;padding:14px;"><i class="fas fa-paper-plane"></i> Submit Review</button>
+                <form id="feedback-form" novalidate>
+                    <div class="form-group">
+                        <label for="feedback-name">Name</label>
+                        <input type="text" id="feedback-name" class="form-control" maxlength="60">
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback-email">Email</label>
+                        <input type="email" id="feedback-email" class="form-control" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback-studio-select">Studio</label>
+                        <select id="feedback-studio-select" class="form-control"></select>
+                    </div>
+                    <span class="form-label">Your Rating</span>
+                    <div class="star-rating" role="radiogroup" aria-label="Rating">
+                        <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="5 stars">&#9733;</label>
+                        <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="4 stars">&#9733;</label>
+                        <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="3 stars">&#9733;</label>
+                        <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="2 stars">&#9733;</label>
+                        <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="1 star">&#9733;</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="feedback-message">Your Review</label>
+                        <textarea id="feedback-message" class="form-control" rows="4" maxlength="600" placeholder="Tell us about your experience..."></textarea>
+                    </div>
+                    <button id="submit-feedback-btn" type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> Submit Review</button>
+                    <p id="feedback-error" class="error form-error" role="alert"></p>
+                </form>
             </div>
             <div class="modal-image-section">
-                <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=800" alt="Studio session">
+                <img src="https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=800" alt="" loading="lazy">
             </div>
         </div>
     </div>
 
-    <!-- Scripts -->
-    <script src="components.js?v=3"></script>
-    <script src="auth.js?v=3"></script>
-    <script src="scripts.js?v=3"></script>
-    <script src="modalLogic.js?v=3"></script>
-    
-    <script>
-        // Ensure handleLoginSubmit is globally available
-        if (typeof handleLoginSubmit === 'undefined') {
-            window.handleLoginSubmit = function(event) {
-                if (event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }
-                
-                const email = document.getElementById('login-email').value.trim();
-                const pwd = document.getElementById('login-password').value.trim();
-                const errorEl = document.getElementById('login-error');
-                errorEl.textContent = '';
-
-                let loggedInUser = null;
-
-                if (email === 'user@example.com' && pwd === 'password123') {
-                    loggedInUser = { loggedIn: true, isAdmin: false, name: 'Gem', email };
-                } else if (email === 'admin@example.com' && pwd === 'admin123') {
-                    loggedInUser = { loggedIn: true, isAdmin: true, name: 'Admin', email };
-                }
-
-                if (loggedInUser) {
-                    localStorage.setItem('currentUser', JSON.stringify(loggedInUser));
-                    window.user = loggedInUser;
-                    
-                    if (typeof window.updateHeaderUI === 'function') {
-                        window.updateHeaderUI();
-                    }
-                    
-                    document.getElementById('login-email').value = '';
-                    document.getElementById('login-password').value = '';
-                    
-                    const modal = document.getElementById('authModal');
-                    if (modal) modal.style.display = 'none';
-                    
-                    const redirectUrl = loggedInUser.isAdmin ? 'admin.html' : 'user-dashboard.html';
-                    setTimeout(() => {
-                        location.href = redirectUrl;
-                    }, 50);
-                } else {
-                    errorEl.textContent = 'Invalid email or password.';
-                }
-            };
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.117.2/dist/umd/supabase.js"></script>
+    <script src="config.js?v=5"></script>
+    <script src="auth.js?v=5"></script>
+    <script src="store.js?v=5"></script>
+    <script src="scripts.js?v=5"></script>
+    <script src="modalLogic.js?v=5"></script>
+    <script src="components.js?v=5"></script>
 </body>
 </html>

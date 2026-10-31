@@ -1,482 +1,274 @@
-// --- Global State ---
-// Initialize user from localStorage if available, otherwise set default
-let user = (() => {
-    const storedUser = localStorage.getItem('currentUser');
-    if (storedUser) {
-        try {
-            return JSON.parse(storedUser);
-        } catch (e) {
-            console.error('Failed to parse stored user:', e);
-        }
-    }
-    return { loggedIn: false, isAdmin: false, name: null, email: null };
-})();
+/* =============================================================
+   I Studio Records — Auth, detail and review modals
+   Used on index.html and user-dashboard.html.
+   Depends on: auth.js, store.js, scripts.js
+   ============================================================= */
 
-let currentStudioForBooking = null; // To keep track of which studio is being booked
+let currentStudioForBooking = null;
 
-// --- LOGIN HANDLER FUNCTION (can be called from onclick) ---
-function handleLoginSubmit(event) {
-    if (event) {
-        event.preventDefault();
-        event.stopPropagation();
+function setBusy(button, busy, label) {
+    if (!button) return;
+    if (busy) {
+        button.dataset.label = button.innerHTML;
+        button.disabled = true;
+        button.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${label || 'Please wait…'}`;
+    } else {
+        button.disabled = false;
+        if (button.dataset.label) button.innerHTML = button.dataset.label;
     }
-    
+}
+
+// --- AUTH MODAL ---
+function showAuthPanel(panel) {
+    ['loginForm', 'signupForm', 'confirmPanel'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = id === panel ? 'block' : 'none';
+    });
+    const li = document.getElementById('login-image');
+    const si = document.getElementById('signup-image');
+    if (li) li.style.display = panel === 'signupForm' ? 'none' : 'block';
+    if (si) si.style.display = panel === 'signupForm' ? 'block' : 'none';
+}
+const showLogin = () => showAuthPanel('loginForm');
+const showSignup = () => showAuthPanel('signupForm');
+
+function openAuthModal(mode = 'login') {
+    if (!document.getElementById('authModal')) {
+        window.location.href = 'index.html?login=1';
+        return;
+    }
+    ['login-error', 'signup-error', 'login-info'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '';
+    });
+    if (mode === 'signup') showSignup(); else showLogin();
+    openModal('authModal');
+}
+window.openAuthModal = openAuthModal;
+
+/** After login/signup: resume a pending booking, otherwise go to the dashboard. */
+async function onAuthenticated(session) {
+    window.user = session;
+    updateHeaderUI();
+    closeModal('authModal');
+
+    const pending = sessionStorage.getItem('pendingBooking');
+    if (pending && document.getElementById('advancedBookingModal')) {
+        sessionStorage.removeItem('pendingBooking');
+        showToast(`Welcome, ${session.name}! Let's finish your booking.`, 'success');
+        await reloadData();
+        requestBooking(pending);
+        return;
+    }
+    window.location.href = session.isAdmin ? 'admin.html' : 'user-dashboard.html';
+}
+
+async function handleLoginSubmit(event) {
+    if (event) event.preventDefault();
     const email = document.getElementById('login-email').value.trim();
-    const pwd = document.getElementById('login-password').value.trim();
+    const pwd = document.getElementById('login-password').value;
     const errorEl = document.getElementById('login-error');
+    const btn = document.getElementById('login-btn');
     errorEl.textContent = '';
 
-    // Use the new authentication function
-    const result = typeof authenticateUser === 'function'
-        ? authenticateUser(email, pwd)
-        : null;
-
-    if (result && typeof result === 'object' && result.loggedIn) {
-        // Save to localStorage
-        localStorage.setItem('currentUser', JSON.stringify(result));
-        // Update both local and window user variables
-        window.user = result;
-        user = result;
-        
-        // Update UI
-        if (typeof window.updateHeaderUI === 'function') {
-            window.updateHeaderUI();
-        }
-        
-        // Clear form fields
-        document.getElementById('login-email').value = '';
-        document.getElementById('login-password').value = '';
-        
-        // Close modal
-        const modal = document.getElementById('authModal');
-        if (modal) modal.style.display = 'none';
-        
-        // Redirect
-        const redirectUrl = result.isAdmin ? 'admin.html' : 'user-dashboard.html';
-        setTimeout(() => {
-            location.href = redirectUrl;
-        }, 50);
+    setBusy(btn, true, 'Signing in…');
+    const result = await signIn(email, pwd);
+    setBusy(btn, false);
+    if (result.ok) {
+        document.getElementById('login-form').reset();
+        onAuthenticated(result.user);
     } else {
-        errorEl.textContent = result || 'Invalid email or password.';
+        errorEl.textContent = result.error;
     }
 }
+window.handleLoginSubmit = handleLoginSubmit;
 
-// --- UI UPDATE FUNCTION ---
-function updateHeaderUI() {
-    const guestMenu = document.getElementById('guest-menu');
-    const userMenu = document.getElementById('user-menu');
-    const userGreeting = document.getElementById('user-greeting');
-    if (!guestMenu || !userMenu || !userGreeting) return;
+async function handleSignupSubmit(event) {
+    if (event) event.preventDefault();
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const pwd = document.getElementById('signup-password').value;
+    const cpw = document.getElementById('signup-confirm').value;
+    const errorEl = document.getElementById('signup-error');
+    const btn = document.getElementById('signup-btn');
+    errorEl.textContent = '';
 
-    // Use window.user if available (from dashboard), otherwise use local user
-    const currentUser = window.user || user;
-    
-    if (currentUser && currentUser.loggedIn) {
-        guestMenu.style.setProperty('display', 'none', 'important');
-        userMenu.style.setProperty('display', 'flex', 'important');
-        userGreeting.textContent = `Welcome, ${currentUser.name}!`;
-    } else {
-        guestMenu.style.setProperty('display', 'flex', 'important');
-        userMenu.style.setProperty('display', 'none', 'important');
-        userGreeting.textContent = '';
-    }
-}
-
-// --- MODAL DISPLAY FUNCTIONS ---
-function openModal(id) { 
-    const modal = document.getElementById(id);
-    if (modal) modal.style.display = 'flex'; 
-}
-function closeModal(element) { 
-    const modal = element.closest('.modal');
-    if (modal) modal.style.display = 'none'; 
-}
-
-// --- SPECIFIC MODAL CONTENT FUNCTIONS ---
-function renderMyRequests(userBookings) {
-    const listEl = document.getElementById('requests-list');
-    if (!listEl) return;
-    if (userBookings.length === 0) {
-        listEl.innerHTML = '<p>You have no booking requests.</p>';
+    if (pwd !== cpw) {
+        errorEl.textContent = 'Passwords do not match.';
         return;
     }
-    listEl.innerHTML = userBookings.map(booking => {
-        const statusClass = `status-${booking.status.toLowerCase()}`;
-        return `
-            <div class="request-item">
-                <h4>${booking.studioName}</h4>
-                <p><strong>Booking Date:</strong> ${booking.bookingDate} | <strong>Time:</strong> ${booking.bookingTime}</p>
-                <p><strong>Status:</strong> <span class="status-badge ${statusClass}">${booking.status}</span></p>
-            </div>
-        `;
-    }).join('');
-}
-
-function renderMyFeedbacks(userFeedbacks) {
-    const listEl = document.getElementById('feedbacks-list');
-    if (!listEl) return;
-    const generateStars = (count) => '★'.repeat(count) + '☆'.repeat(5 - count);
-    if (userFeedbacks.length === 0) {
-        listEl.innerHTML = '<p>You have not submitted any feedback.</p>';
+    setBusy(btn, true, 'Creating account…');
+    const result = await signUp(name, email, pwd);
+    setBusy(btn, false);
+    if (!result.ok) {
+        errorEl.textContent = result.error;
         return;
     }
-    listEl.innerHTML = userFeedbacks.map(feedback => `
-        <div class="feedback-item">
-            <h4>${feedback.studioName}</h4>
-            <div class="feedback-item-meta">
-                <span>${feedback.date}</span> | <span>${generateStars(feedback.rating)}</span>
-            </div>
-            <p class="feedback-item-message">"${feedback.message}"</p>
-        </div>
-    `).join('');
+    document.getElementById('signup-form').reset();
+    if (result.needsConfirmation) {
+        document.getElementById('confirm-email').textContent = email.toLowerCase();
+        showAuthPanel('confirmPanel');
+        return;
+    }
+    onAuthenticated(result.user);
+}
+window.handleSignupSubmit = handleSignupSubmit;
+
+async function handleForgotPassword(event) {
+    if (event) event.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const errorEl = document.getElementById('login-error');
+    const infoEl = document.getElementById('login-info');
+    errorEl.textContent = '';
+    infoEl.textContent = '';
+    const result = await requestPasswordReset(email);
+    if (result.ok) infoEl.textContent = `If ${email} has an account, a reset link is on its way.`;
+    else errorEl.textContent = result.error;
 }
 
+// Opened when the user arrives from a password-reset email
+function openResetPasswordModal() {
+    if (!document.getElementById('resetPasswordModal')) return;
+    document.getElementById('reset-password-form').reset();
+    document.getElementById('reset-error').textContent = '';
+    openModal('resetPasswordModal');
+}
+window.openResetPasswordModal = openResetPasswordModal;
+
+async function handleResetPassword(event) {
+    if (event) event.preventDefault();
+    const pwd = document.getElementById('reset-password').value;
+    const cpw = document.getElementById('reset-confirm').value;
+    const errorEl = document.getElementById('reset-error');
+    if (pwd !== cpw) {
+        errorEl.textContent = 'Passwords do not match.';
+        return;
+    }
+    const result = await updatePassword(pwd);
+    if (!result.ok) {
+        errorEl.textContent = result.error;
+        return;
+    }
+    closeModal('resetPasswordModal');
+    showToast('Password updated — you are signed in.', 'success');
+    await reloadData();
+}
+
+// --- DETAIL MODALS ---
 function showStudioDetails(studio) {
     if (!studio) return;
-    currentStudioForBooking = studio; // Store the current studio
-    document.getElementById('modal-studio-image').src = studio.imageUrl;
-    document.getElementById('modal-studio-image').alt = studio.name;
+    currentStudioForBooking = studio;
+    const img = document.getElementById('modal-studio-image');
+    img.src = studio.imageUrl;
+    img.alt = studio.name;
     document.getElementById('modal-studio-title').textContent = studio.name;
     document.getElementById('modal-studio-location').textContent = studio.location;
-    document.getElementById('modal-studio-long-description').textContent = studio.longDescription;
+    document.getElementById('modal-studio-long-description').textContent = studio.longDescription || studio.description;
+    document.getElementById('modal-studio-rate').textContent = `${Store.formatMoney(studio.hourlyRate)} / hour`;
     openModal('studioModal');
 }
+window.showStudioDetails = showStudioDetails;
 
 function showInstrumentDetails(instrument) {
     if (!instrument) return;
-    document.getElementById('modal-instr-image').src = instrument.imageUrl;
-    document.getElementById('modal-instr-image').alt = instrument.name;
+    const img = document.getElementById('modal-instr-image');
+    img.src = instrument.imageUrl;
+    img.alt = instrument.name;
     document.getElementById('modal-instr-title').textContent = instrument.name;
-    document.getElementById('modal-instr-long-description').textContent = instrument.longDescription;
-    document.getElementById('modal-instr-joke').textContent = instrument.joke;
-    document.getElementById('modal-instr-fun-fact').textContent = instrument.funFact;
+    document.getElementById('modal-instr-long-description').textContent = instrument.longDescription || instrument.description || '';
+    document.getElementById('modal-instr-joke').textContent = instrument.joke || '';
+    document.getElementById('modal-instr-fun-fact').textContent = instrument.funFact || '';
+    document.getElementById('modal-instr-fun-fact').closest('p').style.display = instrument.funFact ? '' : 'none';
     openModal('instrumentModal');
 }
+window.showInstrumentDetails = showInstrumentDetails;
 
-function showLogin(){
-    document.getElementById('loginForm').style.display='block';
-    document.getElementById('signupForm').style.display='none';
-    document.getElementById('login-image').style.display = 'block';
-    document.getElementById('signup-image').style.display = 'none';
-}
-function showSignup(){
-    document.getElementById('loginForm').style.display='none';
-    document.getElementById('signupForm').style.display='block';
-    document.getElementById('login-image').style.display = 'none';
-    document.getElementById('signup-image').style.display = 'block';
-}
-
-function renderTimeSlots(selectedDate, studio) {
-    const timeSlotsContainer = document.getElementById('time-slots-container');
-    const allSlots = ["10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
-    const unavailableSlots = studio.unavailableSlots[selectedDate] || [];
-    timeSlotsContainer.innerHTML = allSlots.map(slot => {
-        const isUnavailable = unavailableSlots.includes(slot);
-        return `<button class="time-slot-btn" data-time="${slot}" ${isUnavailable ? 'disabled' : ''}>${slot}</button>`;
-    }).join('');
-    timeSlotsContainer.querySelectorAll('.time-slot-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            timeSlotsContainer.querySelectorAll('.time-slot-btn').forEach(b => b.classList.remove('selected'));
-            btn.classList.add('selected');
-        });
-    });
-}
-
-function openAdvancedBookingModal(studio) {
-    if (!studio) return;
-    document.getElementById('adv-booking-title').textContent = `Book: ${studio.name}`;
-    document.getElementById('adv-booking-location').textContent = studio.location;
-    const dateInput = document.getElementById('adv-booking-date');
-    const today = new Date().toISOString().split('T')[0];
-    dateInput.setAttribute('min', today);
-    dateInput.value = today;
-    renderTimeSlots(today, studio);
-    dateInput.addEventListener('input', () => {
-        renderTimeSlots(dateInput.value, studio);
-    });
-    openModal('advancedBookingModal');
-}
-
-function openFeedbackModal(studio) {
-    if (!studio) return;
-    
-    // Pre-fill user and studio info
-    document.getElementById('feedback-name').value = user.name;
-    document.getElementById('feedback-email').value = user.email;
-    
-    // Populate and select the correct studio in the dropdown
-    const studioSelect = document.getElementById('feedback-studio-select');
-    studioSelect.innerHTML = appData.studios.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
-    studioSelect.value = studio.name;
-
-    openModal('feedbackModal');
-}
-
-
-// --- MASTER CLICK HANDLER (EVENT DELEGATION) ---
-document.addEventListener('click', function(event) {
-    const target = event.target;
-
-    // --- Main Login/Signup Button ---
-    if (target.closest('#login-signup-btn')) {
-        event.preventDefault();
-        openModal('authModal');
-        showLogin();
-    }
-    
-    // --- Hero Banner "Book a Studio" Button ---
-    if (target.closest('#hero-book-btn')) {
-        event.preventDefault();
-        if (!user.loggedIn) {
-            openModal('authModal');
-            showLogin();
-        } else {
-            // This can be changed later to open a general booking modal
-            // For now, let's just alert or scroll to studios
-            document.getElementById('studios').scrollIntoView();
-        }
-    }
-
-    // --- Studio Modal "Book Now" Button -> Opens New Paystack Booking ---
-    if (target.closest('#modal-studio-book-btn')) {
-        event.preventDefault();
-        const user = window.user || {};
-        if (user.loggedIn && !user.isAdmin) {
-            closeModal(target);
-            if (typeof window.openBookingModal === 'function') {
-                window.openBookingModal(currentStudioForBooking);
-            } else {
-                openAdvancedBookingModal(currentStudioForBooking);
-            }
-        } else {
-            closeModal(target);
-            openModal('authModal');
-            showLogin();
-            if (typeof window.showToast === 'function') window.showToast('Please sign in to book a studio', 'info');
-        }
-    }
-
-    // --- Final Booking Confirmation ---
-    if (target.closest('#confirm-advanced-booking')) {
-        const selectedDate = document.getElementById('adv-booking-date').value;
-        const selectedTimeBtn = document.querySelector('.time-slot-btn.selected');
-        if (!selectedDate || !selectedTimeBtn) {
-            alert("Please select a date and time slot.");
-            return;
-        }
-        const selectedTime = selectedTimeBtn.dataset.time;
-        const newBooking = {
-            id: Date.now(),
-            userEmail: user.email,
-            studioName: currentStudioForBooking.name,
-            requestDate: new Date().toISOString().split('T')[0],
-            bookingDate: selectedDate,
-            bookingTime: selectedTime,
-            status: "Pending"
-        };
-        appData.bookings.push(newBooking);
-        
-        // Save to localStorage
-        const storedAppData = JSON.parse(localStorage.getItem('appData') || '{}');
-        if (!storedAppData.bookings) storedAppData.bookings = [];
-        storedAppData.bookings.push(newBooking);
-        localStorage.setItem('appData', JSON.stringify(storedAppData));
-
-        // Close the current modal
-        closeModal(target);
-        alert(`Booking request for ${newBooking.studioName} has been submitted!`);
-
-        // Now, open the "My Requests" modal to show the updated list
-        const userBookings = appData.bookings.filter(b => b.userEmail === user.email);
-        renderMyRequests(userBookings);
-        openModal('myRequestsModal');
-    }
-
-    // --- Modal Close Buttons ---
-    if (target.closest('.modal-close')) {
-        closeModal(target);
-    }
-
-    // --- Auth Form Switching ---
-    if (target.closest('#showSignup')) { event.preventDefault(); showSignup(); }
-    if (target.closest('#showLogin')) { event.preventDefault(); showLogin(); }
-
-    // --- Form Submissions (Login & Signup) ---
-    // LOGIN BUTTON LOGIC
-    if (target.id === 'login-btn' || target.closest('#login-btn')) {
-        event.preventDefault();
-        event.stopPropagation();
-        
-        const email = document.getElementById('login-email').value.trim();
-        const pwd = document.getElementById('login-password').value.trim();
-        const errorEl = document.getElementById('login-error');
-        errorEl.textContent = '';
-
-        // Use the new authentication function
-        const result = typeof authenticateUser === 'function' 
-            ? authenticateUser(email, pwd)
-            : null;
-
-        if (result && typeof result === 'object' && result.loggedIn) {
-            // Save to localStorage
-            localStorage.setItem('currentUser', JSON.stringify(result));
-            // Update both local and window user variables
-            window.user = result;
-            user = result;
-            
-            // Update UI
-            if (typeof window.updateHeaderUI === 'function') {
-                window.updateHeaderUI();
-            }
-            
-            // Clear form fields
-            document.getElementById('login-email').value = '';
-            document.getElementById('login-password').value = '';
-            
-            // Close modal
-            const modal = document.getElementById('authModal');
-            if (modal) modal.style.display = 'none';
-            
-            // Perform redirect
-            const redirectUrl = result.isAdmin ? 'admin.html' : 'user-dashboard.html';
-            setTimeout(() => {
-                location.href = redirectUrl;
-            }, 50);
-        } else {
-            errorEl.textContent = result || 'Invalid email or password.';
-        }
+// --- REVIEW (FEEDBACK) MODAL ---
+function openFeedbackModal(studioId) {
+    const u = refreshUser();
+    if (!u.loggedIn) {
+        openAuthModal('login');
+        showToast('Please sign in to leave a review', 'info');
         return;
     }
+    const form = document.getElementById('feedback-form');
+    if (!form) return;
+    form.reset();
+    document.getElementById('feedback-error').textContent = '';
+    document.getElementById('feedback-name').value = u.name || '';
+    document.getElementById('feedback-email').value = u.email || '';
 
-// logout button logic 
-if (target.closest('#logout-btn')) {
-    event.preventDefault();
-    localStorage.removeItem('currentUser'); // Remove user from localStorage
-    // Clear both local and window user variables
-    user = { loggedIn: false, isAdmin: false, name: null, email: null };
-    window.user = { loggedIn: false, isAdmin: false, name: null, email: null };
-    if (window.updateHeaderUI) window.updateHeaderUI();
-    // Redirect to home page
-    window.location.href = 'index.html';
+    const select = document.getElementById('feedback-studio-select');
+    select.innerHTML = Store.getStudios()
+        .map(s => `<option value="${Store.escapeHTML(s.id)}">${Store.escapeHTML(s.name)}</option>`)
+        .join('');
+    if (studioId) select.value = studioId;
+    openModal('feedbackModal');
 }
+window.openFeedbackModal = openFeedbackModal;
 
-    if (target.closest('#signup-btn')) {
-        const name = document.getElementById('signup-name').value.trim();
-        const email = document.getElementById('signup-email').value.trim();
-        const pwd = document.getElementById('signup-password').value;
-        const cpw = document.getElementById('signup-confirm').value;
-        const errorEl = document.getElementById('signup-error');
-        
-        // Validate passwords match
-        if (pwd !== cpw) {
-            errorEl.textContent = 'Passwords do not match.';
-            return;
-        }
-        
-        // Use the new registration function
-        const result = typeof registerUser === 'function'
-            ? registerUser(name, email, pwd)
-            : null;
+async function handleFeedbackSubmit(event) {
+    if (event) event.preventDefault();
+    const errorEl = document.getElementById('feedback-error');
+    const btn = document.getElementById('submit-feedback-btn');
+    const rating = document.querySelector('#feedback-form input[name="rating"]:checked');
+    errorEl.textContent = '';
 
-        if (result && typeof result === 'object' && result.loggedIn) {
-            errorEl.textContent = '';
-            // Save to localStorage
-            localStorage.setItem('currentUser', JSON.stringify(result));
-            // Update both local and window user variables
-            window.user = result;
-            user = result;
-            if (window.updateHeaderUI) window.updateHeaderUI();
-            closeModal(target);
-            // Clear form
-            document.getElementById('signup-name').value = '';
-            document.getElementById('signup-email').value = '';
-            document.getElementById('signup-password').value = '';
-            document.getElementById('signup-confirm').value = '';
-            // Redirect to user dashboard
-            setTimeout(() => {
-                window.location.href = 'user-dashboard.html';
-            }, 100);
-        } else {
-            errorEl.textContent = result || 'Registration failed. Please try again.';
-        }
+    setBusy(btn, true, 'Sending…');
+    const result = await Store.addFeedback({
+        name: document.getElementById('feedback-name').value.trim(),
+        studioId: document.getElementById('feedback-studio-select').value,
+        rating: rating ? rating.value : 0,
+        message: document.getElementById('feedback-message').value
+    });
+    setBusy(btn, false);
+    if (!result.ok) {
+        errorEl.textContent = result.error;
+        return;
     }
-    
-    
-    if (target.closest('#my-requests-btn')) {
+    closeModal('feedbackModal');
+    showToast('Thank you for your review!', 'success');
+    document.dispatchEvent(new CustomEvent('data:changed'));
+}
+window.handleFeedbackSubmit = handleFeedbackSubmit;
+
+// --- DELEGATED CLICKS ---
+document.addEventListener('click', function (event) {
+    const target = event.target;
+
+    if (target.closest('#login-signup-btn')) {
         event.preventDefault();
-        const userBookings = appData.bookings ? appData.bookings.filter(b => b.userEmail === user.email) : [];
-        renderMyRequests(userBookings);
-        openModal('myRequestsModal');
+        openAuthModal('login');
+        return;
     }
-    if (target.closest('#my-feedbacks-btn')) {
-        event.preventDefault();
-        const userFeedbacks = appData.feedbacks ? appData.feedbacks.filter(f => f.userEmail === user.email) : [];
-        renderMyFeedbacks(userFeedbacks);
-        openModal('myFeedbacksModal');
-    }
+    if (target.closest('#showSignup')) { event.preventDefault(); showSignup(); return; }
+    if (target.closest('#showLogin, #confirm-back-btn')) { event.preventDefault(); showLogin(); return; }
+    if (target.closest('#forgot-password-link')) { handleForgotPassword(event); return; }
 
-    // Handle "Submit Feedback" button in Studio Modal ---
+    if (target.closest('#modal-studio-book-btn')) {
+        event.preventDefault();
+        closeModal('studioModal');
+        if (currentStudioForBooking) requestBooking(currentStudioForBooking.id);
+        return;
+    }
     if (target.closest('#modal-studio-feedback-btn')) {
         event.preventDefault();
-        if (user.loggedIn) {
-            closeModal(target); // Close the studio details modal
-            openFeedbackModal(currentStudioForBooking); // Open the feedback form
-        } else {
-            alert("Please log in to submit feedback.");
-            closeModal(target);
-            openModal('authModal');
-            showLogin();
-        }
+        closeModal('studioModal');
+        openFeedbackModal(currentStudioForBooking && currentStudioForBooking.id);
+        return;
     }
-
-    // Handle final submission from the Feedback Form ---
-    if (target.closest('#submit-feedback-btn')) {
-        const ratingInput = document.querySelector('.star-rating input[name="rating"]:checked');
-        const messageInput = document.getElementById('feedback-message');
-
-        // Validation
-        if (!ratingInput || !messageInput.value) {
-            alert("Please provide a rating and a message for your feedback.");
-            return;
-        }
-
-        const newFeedback = {
-            id: Date.now(),
-            userEmail: user.email,
-            studioName: currentStudioForBooking.name,
-            date: new Date().toISOString().split('T')[0],
-            rating: parseInt(ratingInput.value),
-            message: messageInput.value
-        };
-
-        // Add to our mock database
-        appData.feedbacks.push(newFeedback);
-        
-        // Save to localStorage
-        const storedAppData = JSON.parse(localStorage.getItem('appData') || '{}');
-        if (!storedAppData.feedbacks) storedAppData.feedbacks = [];
-        storedAppData.feedbacks.push(newFeedback);
-        localStorage.setItem('appData', JSON.stringify(storedAppData));
-
-        alert("Thank you for your feedback!");
-        closeModal(target);
-        
-        // As you requested, let's open the "My Feedbacks" modal so you can see your new entry!
-        const userFeedbacks = appData.feedbacks.filter(f => f.userEmail === user.email);
-        renderMyFeedbacks(userFeedbacks);
-        openModal('myFeedbacksModal');
+    const reviewBtn = target.closest('[data-action="leave-review"]');
+    if (reviewBtn) {
+        event.preventDefault();
+        openFeedbackModal(reviewBtn.dataset.studioId);
     }
 });
 
-// Run on initial page load to set the correct header state
-window.addEventListener('load', function() {
-    // Ensure user is loaded from storage
-    if (typeof loadUserFromStorage === 'function') {
-        loadUserFromStorage();
+document.addEventListener('submit', function (event) {
+    switch (event.target.id) {
+        case 'login-form': handleLoginSubmit(event); break;
+        case 'signup-form': handleSignupSubmit(event); break;
+        case 'feedback-form': handleFeedbackSubmit(event); break;
+        case 'reset-password-form': handleResetPassword(event); break;
     }
-    // Sync the local user with window.user if they differ
-    if (window.user && window.user.loggedIn) {
-        user = window.user;
-    }
-    updateHeaderUI();
 });

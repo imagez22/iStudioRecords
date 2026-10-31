@@ -1,104 +1,64 @@
-# 🎵 Quick Reference - Authentication System
+# 🎵 Quick Reference — I Studio Records
 
-## Login Credentials
-
-### Admin Account (Only Production Admin)
-```
-Email: admin@example.com
-Password: admin123
-```
+The site is static HTML/JS, deployed on **Netlify** at <https://istudiorecords.space>. Accounts, bookings, reviews and
+prices live in **Supabase**; payments go through **Paystack** and are verified by the
+`book` Edge Function. Full setup: [SUPABASE_SETUP.md](SUPABASE_SETUP.md).
 
 ---
 
-## How to Use
+## Run locally
 
-### **To Create a New User Account:**
-1. Click "Login" button on homepage
-2. Click "Create one" link
-3. Fill in the form:
-   - Full Name: Your name
-   - Email: youremail@example.com (must be unique)
-   - Password: Min 8 characters
-   - Confirm: Re-enter password
-4. Click "Create Account"
-
-### **To Login:**
-1. Click "Login" button
-2. Enter email and password
-3. Click "Submit"
-
-### **To Logout:**
-1. Click your username in header
-2. Click "Logout"
-
----
-
-## Features Available
-
-### **For Regular Users:**
-- ✅ Create account via signup
-- ✅ Book studio sessions
-- ✅ View booking history
-- ✅ Submit feedback/reviews
-- ✅ View personal bookings
-
-### **For Admin (admin@example.com only):**
-- ✅ View all bookings
-- ✅ Approve/reject bookings
-- ✅ Manage studios
-- ✅ Manage instruments
-- ✅ View all reviews
-
----
-
-## Validation Rules
-
-| Field | Rule |
-|-------|------|
-| Email | Must contain @ |
-| Email | Must be unique |
-| Password | Minimum 8 characters |
-| Name | Required field |
-
----
-
-## Browser Storage
-
-User data is stored in browser's localStorage:
-- **Key**: `appUsers`
-- **Type**: JSON array
-- **Persistence**: Survives page refreshes and browser restart
-
-To view: F12 → Application → Local Storage → localhost:8000 → appUsers
-
----
-
-## Testing
-
-Run tests: `node test-auth.js`
-
-For detailed test scenarios: See `auth-system-test.md`
-
----
-
-## File Structure
-
-```
-auth.js                 - Authentication functions
-modalLogic.js           - Login/signup handlers
-db.json                 - Admin account only
-test-auth.js            - Test suite
-PRODUCTION_READY.md     - Complete documentation
-auth-system-test.md     - Testing guide
+```bash
+npm install
+npm start            # http://localhost:8000
 ```
 
----
+`config.js` must hold your Supabase project URL and anon key, otherwise the site
+shows a "not connected" banner.
 
-## Status: ✅ Production Ready
+## Accounts
 
-- ✅ New users can register
-- ✅ New users can login
-- ✅ All new accounts are non-admin
-- ✅ Admin account protected
-- ✅ Data persists across sessions
-- ✅ All validation working
+- **Clients** sign up on the site (Login → *Create one*) and confirm their email.
+  Passwords must be at least 8 characters.
+- **There is no default admin.** Create a normal account, then in the Supabase
+  SQL Editor run:
+
+  ```sql
+  update public.profiles set is_admin = true where email = 'you@example.com';
+  ```
+
+  Sign out and back in to reach the admin panel. Nobody can make themselves admin
+  from the site — the database blocks it.
+
+## What each role can do
+
+| Clients | Admins |
+|---|---|
+| Book and pay for sessions | See and approve/reject all bookings |
+| See and cancel their own upcoming bookings | Edit studios, prices and instruments |
+| Leave reviews | Feature reviews as testimonials |
+| | Review payment issues (paid but slot lost) |
+
+## Test payment (Paystack test mode)
+
+Card **4084 0840 8408 4081**, any future expiry, CVV **408**, PIN **0000**, OTP **123456**.
+
+## Tests
+
+```bash
+npm test             # unit + database (real migration in PGlite) + function tests
+npm run test:e2e     # browser tests in Chrome against a local Supabase stand-in
+```
+
+## Key files
+
+```
+index.html, scripts.js     Public site and booking flow
+store.js                   Data access (Supabase) and caching
+auth.js, modalLogic.js     Sign-in / sign-up
+user-dashboard.html        Client dashboard
+admin.html, admin.js       Admin panel
+config.js                  Public keys only (Supabase anon, Paystack public)
+supabase/                  Database migration, seed data, `book` function
+netlify.toml               Netlify headers and blocked paths for the live site
+```

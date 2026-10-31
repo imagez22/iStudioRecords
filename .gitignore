@@ -30,3 +30,7 @@ build/
 # Test coverage
 coverage/
 tests/e2e/artifacts/
+
+# Supabase CLI local state
+supabase/.temp/
+supabase/.branches/

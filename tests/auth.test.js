@@ -19,8 +19,22 @@ describe('validateSignup', () => {
     });
 });
 
+describe('validatePasswordChange', () => {
+    test('accepts valid input', () => {
+        expect(auth.validatePasswordChange('oldpassword', 'newpassword1', 'newpassword1')).toBeNull();
+    });
+
+    test('rejects invalid input', () => {
+        expect(auth.validatePasswordChange('', 'newpassword1', 'newpassword1')).toBe('All fields are required.');
+        expect(auth.validatePasswordChange('oldpassword', 'short', 'short')).toMatch(/at least 8/);
+        expect(auth.validatePasswordChange('oldpassword', 'newpassword1', 'newpassword2')).toMatch(/do not match/);
+        expect(auth.validatePasswordChange('samepassword', 'samepassword', 'samepassword')).toMatch(/different/);
+    });
+});
+
 describe('friendlyAuthError', () => {
     test.each([
+        ['New password should be different from the old password.', 'New password must be different from your current one.'],
         ['Invalid login credentials', 'Invalid email or password.'],
         ['Email not confirmed', 'Please confirm your email first — check your inbox for the link.'],
         ['User already registered', 'Email already registered. Please sign in or use a different email.'],
@@ -41,6 +55,7 @@ describe('without a configured backend', () => {
         expect(await auth.signIn('a@b.com', 'password1')).toEqual({ ok: false, error: 'The booking system is not connected yet.' });
         expect((await auth.signUp('A', 'a@b.com', 'password1')).ok).toBe(false);
         expect((await auth.refreshSession()).loggedIn).toBe(false);
+        expect(await auth.changePassword('oldpassword', 'newpassword1', 'newpassword1')).toEqual({ ok: false, error: 'The booking system is not connected yet.' });
     });
 
     test('sign-up validation runs before any network call', async () => {

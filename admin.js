@@ -10,7 +10,8 @@
     const e = Store.escapeHTML;
     const SECTION_TITLES = {
         dashboard: 'Dashboard', bookings: 'Bookings', studios: 'Studios',
-        instruments: 'Instruments', feedback: 'Client Reviews', users: 'Users', payments: 'Payment Issues'
+        instruments: 'Instruments', feedback: 'Client Reviews', users: 'Users', payments: 'Payment Issues',
+        account: 'Account'
     };
     const bookingFilters = { search: '', status: '' };
 

@@ -189,6 +189,29 @@ document.addEventListener('click', (e) => {
     }
 });
 
+// Change-password form (dashboard and admin panel "Account" sections)
+document.addEventListener('submit', async (e) => {
+    const form = e.target;
+    if (form.id !== 'change-password-form') return;
+    e.preventDefault();
+    const errorEl = form.querySelector('.form-error');
+    const button = form.querySelector('button[type="submit"]');
+    errorEl.textContent = '';
+    button.disabled = true;
+    const result = await changePassword(
+        form.elements['cp-current'].value,
+        form.elements['cp-new'].value,
+        form.elements['cp-confirm'].value
+    );
+    button.disabled = false;
+    if (!result.ok) {
+        errorEl.textContent = result.error;
+        return;
+    }
+    form.reset();
+    showToast('Password changed. Use your new password next time you sign in.', 'success');
+});
+
 // ============================================================
 // HOME PAGE RENDERING
 // ============================================================

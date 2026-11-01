@@ -52,6 +52,15 @@ function validateSignup(name, email, password) {
   return null;
 }
 
+/** Returns an error message, or null when the change-password form is valid. */
+function validatePasswordChange(current, next, confirm) {
+  if (!current || !next || !confirm) return 'All fields are required.';
+  if (next.length < 8) return 'New password must be at least 8 characters long.';
+  if (next !== confirm) return 'New passwords do not match.';
+  if (next === current) return 'New password must be different from your current one.';
+  return null;
+}
+
 /** Turn Supabase Auth errors into friendly messages. */
 function friendlyAuthError(error) {
   const msg = String((error && error.message) || error || '');
@@ -62,6 +71,7 @@ function friendlyAuthError(error) {
   }
   if (/rate limit|too many/i.test(msg)) return 'Too many attempts. Please wait a minute and try again.';
   if (/password should be at least/i.test(msg)) return 'Password must be at least 8 characters long.';
+  if (/should be different from the old password/i.test(msg)) return 'New password must be different from your current one.';
   if (/failed to fetch|network/i.test(msg)) return 'Network error — please check your connection.';
   return msg || 'Something went wrong. Please try again.';
 }
@@ -188,6 +198,27 @@ async function updatePassword(password) {
   return error ? { ok: false, error: friendlyAuthError(error) } : { ok: true };
 }
 
+/**
+ * Change the password of the signed-in user. The current password is checked
+ * first so an unattended signed-in browser can't be used to take the account.
+ */
+async function changePassword(currentPassword, newPassword, confirmPassword) {
+  const invalid = validatePasswordChange(currentPassword, newPassword, confirmPassword);
+  if (invalid) return { ok: false, error: invalid };
+  const sb = getSupabase();
+  if (!sb) return { ok: false, error: 'The booking system is not connected yet.' };
+  const { data } = await sb.auth.getSession();
+  const email = data && data.session && data.session.user && data.session.user.email;
+  if (!email) return { ok: false, error: 'Your session has expired. Please sign in again.' };
+
+  const check = await sb.auth.signInWithPassword({ email, password: currentPassword });
+  if (check.error) {
+    return { ok: false, error: /invalid login credentials/i.test(check.error.message) ? 'Current password is incorrect.' : friendlyAuthError(check.error) };
+  }
+  const { error } = await sb.auth.updateUser({ password: newPassword });
+  return error ? { ok: false, error: friendlyAuthError(error) } : { ok: true };
+}
+
 /** Subscribe to auth events (SIGNED_IN, SIGNED_OUT, PASSWORD_RECOVERY, ...). */
 function onAuthChange(callback) {
   const sb = getSupabase();
@@ -206,6 +237,7 @@ if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     isValidEmail,
     validateSignup,
+    validatePasswordChange,
     friendlyAuthError,
     getCurrentUser,
     setCurrentUser,
@@ -214,6 +246,7 @@ if (typeof module !== 'undefined' && module.exports) {
     signIn,
     signUp,
     signOut,
-    refreshSession
+    refreshSession,
+    changePassword
   };
 }

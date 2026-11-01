@@ -361,6 +361,34 @@ await check('client can post a review; it stays private until featured', async (
     assert(rows.length === 1 && rows[0].rating === 4 && rows[0].featured === false && rows[0].user_email === 'kofi@example.com', JSON.stringify(rows));
 });
 
+await check('client can change their password from the dashboard', async () => {
+    const err = () => page.locator('#change-password-form .form-error').innerText();
+    await page.click('.dash-nav-item[data-tab="account"]');
+    await page.waitForSelector('#tab-account #change-password-form', { state: 'visible' });
+    await page.fill('#cp-current', 'wrongpassword');
+    await page.fill('#cp-new', 'newpassword456');
+    await page.fill('#cp-confirm', 'newpassword4567');
+    await page.click('#change-password-form button[type="submit"]');
+    assert((await err()).includes('do not match'), await err());
+    await page.fill('#cp-confirm', 'newpassword456');
+    await page.click('#change-password-form button[type="submit"]');
+    await page.waitForFunction(() => document.querySelector('#change-password-form .form-error').textContent.includes('incorrect'));
+    await page.fill('#cp-current', 'password123');
+    await page.click('#change-password-form button[type="submit"]');
+    await page.waitForFunction(() => document.getElementById('cp-current').value === '' && !document.querySelector('#change-password-form .form-error').textContent);
+    // The old password no longer works; the new one does
+    await page.goto(`${SITE}/index.html`);
+    await page.waitForSelector('#logout-btn', { state: 'visible' });
+    await logout(page);
+    await loginVia(page, 'kofi@example.com', 'password123');
+    await page.waitForFunction(() => document.getElementById('login-error').textContent.includes('Invalid'));
+    await page.fill('#login-password', 'newpassword456');
+    await page.click('#login-btn');
+    await page.waitForURL('**/user-dashboard.html');
+    // Restore the password the later checks sign in with
+    await sql(`update auth.users set encrypted_password = 'password123' where email = 'kofi@example.com'`);
+});
+
 await check('logout ends the Supabase session', async () => {
     await page.goto(`${SITE}/index.html`);
     await page.waitForSelector('#logout-btn', { state: 'visible' });
@@ -415,6 +443,18 @@ await check('the studio owner becomes admin and lands on the admin panel', async
     assert((await page.locator('#stat-revenue').innerText()) === 'GH₵180', 'revenue ' + await page.locator('#stat-revenue').innerText());
     assert(!(await page.locator('#issues-alert').isHidden()), 'payment issue alert should show');
     assert(!(await page.evaluate(() => window.__xss)), 'xss fired in admin');
+});
+
+await check('admin panel has an Account section to change the password', async () => {
+    await page.click('.admin-sidebar-nav a[data-section="account"]');
+    await page.waitForSelector('#section-account #change-password-form', { state: 'visible' });
+    assert((await page.locator('#admin-page-title').innerText()) === 'Account');
+    await page.fill('#cp-current', 'wrongpassword');
+    await page.fill('#cp-new', 'newpassword456');
+    await page.fill('#cp-confirm', 'newpassword456');
+    await page.click('#change-password-form button[type="submit"]');
+    await page.waitForFunction(() => document.querySelector('#change-password-form .form-error').textContent.includes('incorrect'));
+    await page.click('.admin-sidebar-nav a[data-section="dashboard"]');
 });
 
 await check('admin resolves the payment issue', async () => {

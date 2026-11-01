@@ -30,6 +30,7 @@
                 <button type="button" class="dash-nav-item active" data-tab="overview"><i class="fas fa-home"></i> Overview</button>
                 <button type="button" class="dash-nav-item" data-tab="bookings"><i class="fas fa-calendar-check"></i> My Bookings</button>
                 <button type="button" class="dash-nav-item" data-tab="reviews"><i class="fas fa-star"></i> My Reviews</button>
+                <button type="button" class="dash-nav-item" data-tab="account"><i class="fas fa-user-cog"></i> Account</button>
                 <div class="dash-nav-divider"></div>
                 <div class="dash-nav-label">Actions</div>
                 <a href="index.html#studios" class="dash-nav-item"><i class="fas fa-plus"></i> Book a Studio</a>
@@ -112,6 +113,29 @@
                             <button type="button" class="btn btn-primary btn-sm ml-auto" data-action="leave-review"><i class="fas fa-plus"></i> Add Review</button>
                         </div>
                         <div id="reviews-list"></div>
+                    </div>
+                </section>
+
+                <!-- Account -->
+                <section class="dashboard-tab" id="tab-account">
+                    <div class="dash-section">
+                        <div class="dash-section-title"><i class="fas fa-key"></i> Change Password</div>
+                        <form id="change-password-form" class="account-form" novalidate>
+                            <div class="form-group">
+                                <label for="cp-current">Current password</label>
+                                <input type="password" id="cp-current" name="cp-current" class="form-control" autocomplete="current-password" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cp-new">New password</label>
+                                <input type="password" id="cp-new" name="cp-new" class="form-control" autocomplete="new-password" placeholder="Min. 8 characters" minlength="8" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cp-confirm">Confirm new password</label>
+                                <input type="password" id="cp-confirm" name="cp-confirm" class="form-control" autocomplete="new-password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary"><i class="fas fa-key"></i> Change Password</button>
+                            <p class="error form-error" role="alert"></p>
+                        </form>
                     </div>
                 </section>
             </main>
